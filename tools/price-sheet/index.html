@@ -673,7 +673,7 @@
 
   <div class="cc-sec">
     <div class="cc-h"><h3><span class="step">03</span>The prescription</h3><small>Count every item in the home</small></div>
-    <p class="office-note" style="margin:0 0 12px">Everything counted on the Price Sheet tab is already filled in here, except area rugs. Count the rugs, then add air ducts, the dryer vent and anything else the home needs.</p>
+    <p class="office-note" style="margin:0 0 12px">Items counted on the Price Sheet tab are already filled in here. Anything the Price Sheet measures by the foot is counted here instead: enter how many rugs, hallways, bathrooms, laundry rooms and closets. Then add air ducts, the dryer vent and anything else the home needs.</p>
     <div id="rxBuild"></div>
   </div>
 
@@ -883,10 +883,10 @@ function svg(k){return '<svg viewBox="0 0 48 48" fill="none" stroke="currentColo
 var ITEMS=[
  ['Flooring','carpet','Carpet','Per area',88,'carpet'],
  ['Flooring','stairs','Stairs','',112,'stairs'],
- ['Flooring','hall','Hallway','Per lin. ft',4.70,'hall',5],
- ['Flooring','bath','Bathroom','Per lin. ft',4.70,'bath',5],
- ['Flooring','laundry','Laundry Room','Per lin. ft',4.70,'washer',5],
- ['Flooring','closet','Closet','Per lin. ft',4.70,'closet',5],
+ ['Flooring','hall','Hallway','Number of hallways',4.70,'hall'],
+ ['Flooring','bath','Bathroom','Number of bathrooms',4.70,'bath'],
+ ['Flooring','laundry','Laundry Room','Number of laundry rooms',4.70,'washer'],
+ ['Flooring','closet','Closet','Number of closets',4.70,'closet'],
  ['Flooring','tile','Tile & Grout','Per area',112,'tile'],
  ['Flooring','wood','Wood','',132,'wood'],
  ['Flooring','rugs','Area Rugs','Number of rugs',2.64,'rug'],
@@ -902,11 +902,11 @@ var ITEMS=[
  ['Specialty','shower','Shower','',219,'shower'],
  ['Protect your investment','protect','Protectant','Carpet · Upholstery',36,'shield'],
  ['Protect your investment','sealant','Sealant','Tile & Grout · Stone',63,'drop'],
- ['Protect your investment','hallprot','Hallway Protectant','Per lin. ft',2.35,'shield',5],
- ['Protect your investment','hallseal','Hallway Sealant','Per lin. ft',2.35,'drop',5],
+ ['Protect your investment','hallprot','Hallway Protectant','Number of hallways',2.35,'shield'],
+ ['Protect your investment','hallseal','Hallway Sealant','Number of hallways',2.35,'drop'],
  ['Biological decontamination','urine','Urine Decon','Topical',99,'paw'],
  ['Biological decontamination','urinesub','Urine Decon','Sub-surface · per spot',99,'paw'],
- ['Biological decontamination','hallurine','Hallway Urine Topical','Per lin. ft',2.35,'paw',5],
+ ['Biological decontamination','hallurine','Hallway Urine Topical','Number of hallways',2.35,'paw'],
  ['Air quality','duct','Air Duct Cleaning','Sq ft of home',0.70,'vent',100],
  ['Air quality','dryer','Dryer Vent','Free once a year',298,'dryer',1,0]
 ].map(function(r){return {cat:r[0],k:r[1],n:r[2],u:r[3],p:r[4],i:r[5],step:r[6]||1,m:(r[7]!==undefined?r[7]:Math.round(r[4]*50)/100),toggle:r[1]==='dryer',once:(r[1]==='dryer'||r[1]==='duct')};});
@@ -1310,9 +1310,9 @@ function linkPriceSheet(){
  if(!same){ if(window.console) console.warn('Price Sheet rows no longer match the Club items; quantities are not carried over.'); return; }
  var inputs=rows.map(function(tr){return tr.querySelector('td.qty input');});
  function val(el){ var v=parseFloat(el.value); return isFinite(v)&&v>0?v:0; }
- // Area rugs are manual here (Richard 2026-11-13): the Price Sheet measures them in square feet to quote
- // them, this tab only shows the customer how many rugs we can clean. Nothing on the Price Sheet touches it.
- var MANUAL={rugs:true};
+ // Manual here (Richard 2026-11-13): the Price Sheet measures these in square or linear feet to quote them,
+ // this tab only shows the customer how many items we can clean. Nothing on the Price Sheet touches them.
+ var MANUAL={rugs:true,hall:true,bath:true,laundry:true,closet:true,hallprot:true,hallseal:true,hallurine:true};
  function carry(k,v,always){ if(MANUAL[k]) return; if(always || !(Number(S.q[k])>0)) S.q[k]=v; }
  inputs.forEach(function(el,i){ el.addEventListener('input',function(){ carry(PS_KEYS[i],val(el),true); sync(); }); });
  ['clearQty','reset'].forEach(function(id){ var b=$(id); if(b) b.addEventListener('click',function(){ PS_KEYS.forEach(function(k){ if(!MANUAL[k]) S.q[k]=0; }); sync(); }); });
