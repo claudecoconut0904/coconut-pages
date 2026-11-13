@@ -673,6 +673,7 @@
 
   <div class="cc-sec">
     <div class="cc-h"><h3><span class="step">03</span>The prescription</h3><small>Count every item in the home</small></div>
+    <p class="office-note" style="margin:0 0 12px">Everything counted on the Price Sheet tab is already filled in here. Add air ducts, the dryer vent and anything else the home needs.</p>
     <div id="rxBuild"></div>
   </div>
 
@@ -888,7 +889,7 @@ var ITEMS=[
  ['Flooring','closet','Closet','Per lin. ft',4.70,'closet',5],
  ['Flooring','tile','Tile & Grout','Per area',112,'tile'],
  ['Flooring','wood','Wood','',132,'wood'],
- ['Flooring','rugs','Area Rugs','Per sq ft',2.64,'rug',10],
+ ['Flooring','rugs','Area Rugs','Number of rugs',2.64,'rug'],
  ['Upholstery','sectional','Sectional','',438,'sectional'],
  ['Upholstery','sofa','Sofa','',250,'sofa'],
  ['Upholstery','loveseat','Love Seat','',206,'loveseat'],
@@ -1298,8 +1299,30 @@ $('ccClear').addEventListener('click',function(){
 $('ccSave').addEventListener('click',save);
 $('ccSave2').addEventListener('click',save);
 
+/* ---------- quantities carried over from the Price Sheet (Richard 2026-11-13) ----------
+   The prescription follows the Price Sheet: when a quantity changes there, the same item here is set to it,
+   and Clear quantities / Reset all there zero the same items here. Changing an item on this tab does not
+   touch the Price Sheet. Air ducts and the dryer vent only exist on this tab. */
+var PS_KEYS=['carpet','stairs','hall','bath','laundry','closet','tile','wood','rugs','sectional','sofa','loveseat','chair','dining','ottoman','car','counter','mattress','shower','protect','sealant','hallprot','hallseal','urine','urinesub','hallurine'];
+function linkPriceSheet(){
+ var rows=Array.prototype.slice.call(document.querySelectorAll('#tab-sheet tr.item'));
+ var same=rows.length===PS_KEYS.length && rows.every(function(tr,i){ var n=tr.querySelector('td.name'); var t=n&&n.firstChild?String(n.firstChild.textContent||'').trim().toLowerCase():''; return !!BY[PS_KEYS[i]] && t===BY[PS_KEYS[i]].n.toLowerCase(); });
+ if(!same){ if(window.console) console.warn('Price Sheet rows no longer match the Club items; quantities are not carried over.'); return; }
+ var inputs=rows.map(function(tr){return tr.querySelector('td.qty input');});
+ function val(el){ var v=parseFloat(el.value); return isFinite(v)&&v>0?v:0; }
+ // Rugs are square feet on the Price Sheet but a count of rugs here, so the number is not copied: any
+ // square footage there means "at least one rug" here, and the pro sets how many.
+ var COUNTED={rugs:true};
+ function carry(k,v,always){ if(COUNTED[k]){ if(v<=0){ if(always) S.q[k]=0; } else if(!(Number(S.q[k])>0)) S.q[k]=1; return; } if(always || !(Number(S.q[k])>0)) S.q[k]=v; }
+ inputs.forEach(function(el,i){ el.addEventListener('input',function(){ carry(PS_KEYS[i],val(el),true); sync(); }); });
+ ['clearQty','reset'].forEach(function(id){ var b=$(id); if(b) b.addEventListener('click',function(){ PS_KEYS.forEach(function(k){ S.q[k]=0; }); sync(); }); });
+ // On opening: anything already counted on the Price Sheet that the prescription does not have yet.
+ function fill(){ var ch=false; inputs.forEach(function(el,i){ var v=val(el); if(v>0 && !(Number(S.q[PS_KEYS[i]])>0)){ carry(PS_KEYS[i],v,false); ch=true; } }); if(ch) sync(); }
+ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',fill); else fill();
+}
+
 /* ---------- boot ---------- */
-buildGrid(); buildCal(); bindVisits(); bindFields(); linkName(); bindPhotos(); renderPhotos(); renderBA(); bindBA(); bindTabs(); sync();
+buildGrid(); buildCal(); bindVisits(); bindFields(); linkName(); bindPhotos(); renderPhotos(); renderBA(); bindBA(); bindTabs(); sync(); linkPriceSheet();
 })();
 </script>
 
