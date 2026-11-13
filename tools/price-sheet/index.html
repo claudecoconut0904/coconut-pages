@@ -1,0 +1,1308 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Coconut Price Sheet Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800;900&family=JetBrains+Mono:wght@500;600&display=swap">
+<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<style>
+  :root{
+    --blue:#1BA9FA; --blue-dark:#0E8FDC; --gold:#BE9B60;
+    --ink:#111111; --ink-2:#4A4A4A; --muted:#8A8A8A; --grey:#7D7D7D;
+    --row:#F2F2F2; --sheet:#FFFFFF; --page:#E9EDF0; --rule:#DDDDDD;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--ink);font-family:"Montserrat",Helvetica,Arial,sans-serif;font-size:14px;line-height:1.35;-webkit-font-smoothing:antialiased}
+  .sheet{max-width:860px;margin:24px auto 48px;background:var(--sheet);box-shadow:0 10px 30px rgba(0,0,0,.10)}
+  @media (max-width:900px){.sheet{margin:0}}
+
+  .hdr{background:var(--blue);color:#fff;padding:34px 40px 30px;display:flex;justify-content:space-between;align-items:flex-start;gap:24px}
+  .logo{font-weight:900;font-size:40px;line-height:.95;letter-spacing:-.01em;text-transform:uppercase;margin:0}
+  .logo span{display:block;font-weight:800;font-size:26px;margin-top:2px}
+  .tag{text-align:right;padding-top:6px}
+  .tag b{display:block;font-weight:600;font-size:12px;letter-spacing:.22em;text-transform:uppercase}
+  .tag i{display:block;font-style:normal;font-weight:300;font-size:12px;margin-top:8px;opacity:.95}
+  @media (max-width:600px){.hdr{flex-direction:column;padding:24px 16px}.tag{text-align:left}}
+
+  .cust{display:flex;align-items:center;gap:14px;padding:16px 40px;background:#F7FAFC;border-bottom:1px solid var(--rule);flex-wrap:wrap}
+  .cust label{font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:var(--ink);white-space:nowrap}
+  .cust input{font:inherit;font-weight:800;font-size:18px;flex:1;min-width:220px;border:0;border-bottom:2px solid var(--ink);background:transparent;padding:6px 2px;color:var(--ink);text-transform:uppercase;letter-spacing:.02em}
+  .cust input::placeholder{color:#B8C2CA;font-weight:600;text-transform:none;letter-spacing:0}
+  .cust input:focus{outline:none;border-bottom-color:var(--blue)}
+  .cust .date{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+  @media (max-width:600px){.cust{padding:14px 16px}}
+  .body{padding:22px 40px 30px}
+  @media (max-width:600px){.body{padding:18px 12px 24px}}
+  .wrap{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+  thead th{font-weight:600;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink);padding:8px 10px 12px;border-bottom:2px solid var(--ink);text-align:right;vertical-align:bottom}
+  thead th:first-child{text-align:left}
+  thead th small{display:block;font-weight:400;font-size:10px;letter-spacing:.12em;color:var(--muted);margin-top:3px;text-transform:none}
+  thead th.tot .pill{display:inline-block;background:var(--blue);color:#fff;padding:7px 12px;border-radius:6px;min-width:112px;text-align:center}
+  thead th.tot .pill small{color:#E6F5FF}
+  thead th.qty{text-align:center}
+  col.c-svc{width:44%} col.c-std{width:16%} col.c-qty{width:16%} col.c-tot{width:24%}
+
+  tr.sec td{padding:20px 10px 4px;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--blue);font-weight:600;border:0}
+  tr.item td{padding:6px 10px;font-size:14px;border:0;vertical-align:middle}
+  tr.item:nth-of-type(odd) td{background:var(--row)}
+  td.name{font-weight:800;letter-spacing:.02em;text-transform:uppercase}
+  td.name .unit{font-weight:400;font-size:10px;letter-spacing:.18em;color:var(--muted);margin-left:10px;text-transform:uppercase;white-space:nowrap}
+  td.std{text-align:right;font-weight:800;white-space:nowrap}
+  td.std .eff{display:block;font-weight:400;font-size:10px;color:var(--blue);letter-spacing:.04em}
+  td.qty{text-align:center}
+  td.qty input{font:inherit;font-weight:800;font-size:14px;width:64px;text-align:center;border:1.5px solid #C9CFD4;border-radius:6px;background:#fff;padding:5px 4px;color:var(--ink)}
+  td.qty input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 2px #CFEBFD}
+  td.qty input::placeholder{color:#C4C9CE;font-weight:400}
+  td.qty input::-webkit-outer-spin-button,td.qty input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  td.qty input[type=number]{-moz-appearance:textfield}
+  td.tot{text-align:right;font-weight:800;color:var(--blue);white-space:nowrap}
+  td.tot.zero{color:#B8C2CA;font-weight:600}
+  tr.item.has td{background:#EAF6FE !important}
+
+  /* promotional row */
+  tr.promo td{background:#FFF9EE !important;border-top:2px solid var(--gold);border-bottom:2px solid var(--gold);padding:10px}
+  tr.promo td.name{color:var(--gold)}
+  tr.promo td.name .lbl{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;margin-bottom:4px}
+  tr.promo .lock{font-weight:400;font-size:10px;letter-spacing:.18em;color:var(--gold);text-transform:uppercase}
+  tr.promo input.txt{font:inherit;font-weight:800;text-transform:uppercase;letter-spacing:.02em;border:0;border-bottom:1px dashed var(--gold);background:transparent;color:var(--ink);padding:2px 0;width:100%;max-width:320px}
+  tr.promo.fee td{border-top:0;padding-top:8px;padding-bottom:8px}
+  tr.promo.fee td.name .lbl{margin-bottom:0}
+  tr.promo input.txt::placeholder{color:#B9A784;font-weight:600;text-transform:none;letter-spacing:0}
+  .money{display:inline-flex;align-items:baseline;justify-content:flex-end;gap:2px}
+  .money input{font:inherit;font-weight:800;width:70px;text-align:right;border:0;border-bottom:1px dashed var(--gold);background:transparent;color:inherit;padding:2px 0}
+  .money input:focus{outline:2px solid var(--blue);outline-offset:2px;border-radius:2px}
+  .money input::-webkit-outer-spin-button,.money input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .money input[type=number]{-moz-appearance:textfield}
+  input.txt:focus{outline:2px solid var(--blue);outline-offset:2px;border-radius:2px}
+
+  /* gold boxed groups */
+  tr.box td{padding:0;border:0;background:transparent !important}
+  .gbox{margin:22px 0 0;background:var(--row);border-left:5px solid var(--gold);padding:14px 12px 12px}
+  .gbox .t{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);font-weight:600;margin:0 0 8px}
+  .gbox table{min-width:0}
+  .gbox table tr.item td{background:transparent}
+  .gbox table tr.item.has td{background:#E3F2FC !important}
+  .gbox .note{font-weight:300;font-size:11px;color:var(--ink-2);margin:8px 10px 0}
+  .gbox .guar{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--blue);font-weight:600;margin:6px 10px 0}
+
+  .subtot{margin-top:22px;border-top:2px solid var(--ink);display:flex;justify-content:space-between;align-items:center;gap:16px;padding:12px 10px 0;flex-wrap:wrap}
+  .subtot .sl{font-weight:800;text-transform:uppercase;letter-spacing:.06em;font-size:14px}
+  .subtot .sl small{display:block;font-weight:400;font-size:10px;letter-spacing:.18em;color:var(--muted);margin-top:3px;text-transform:uppercase}
+  .subtot .sv{font-weight:900;font-size:22px;color:var(--ink);font-variant-numeric:tabular-nums}
+  .subtot .sv.dim{color:#B8C2CA}
+  .saves{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:8px 10px 0;font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+  .saves b{color:var(--blue);font-weight:800;font-size:14px}
+  .saves[hidden]{display:none}
+
+  /* discount + grand total */
+  .drow{margin-top:26px;border-top:2px solid var(--ink);padding-top:14px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .drow .lbl{font-weight:800;text-transform:uppercase;letter-spacing:.06em;font-size:14px}
+  .drow .lbl small{display:block;font-weight:400;font-size:10px;letter-spacing:.18em;color:var(--muted);margin-top:3px}
+  .dctl{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .dctl .pct{display:flex;align-items:center;background:#fff;border:2px solid var(--ink);border-radius:8px;padding:2px 10px 2px 2px}
+  .dctl .pct input{font:inherit;font-weight:900;font-size:26px;width:86px;text-align:right;border:0;background:transparent;padding:4px 6px;color:var(--ink)}
+  .dctl .pct input:focus{outline:none}
+  .dctl .pct b{font-weight:900;font-size:20px}
+  .dctl .pct:focus-within{border-color:var(--blue)}
+  .chips{display:flex;gap:6px;flex-wrap:wrap}
+  .chip{font:inherit;font-weight:600;font-size:11px;letter-spacing:.1em;padding:7px 10px;border-radius:999px;border:1px solid var(--rule);background:#fff;color:var(--ink-2);cursor:pointer}
+  .chip:hover{border-color:var(--ink);color:var(--ink)}
+  .chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+  .chip.club.on{background:var(--blue-dark);border-color:var(--blue-dark)}
+  .chip.vip.on{background:var(--gold);border-color:var(--gold)}
+  .chip:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+
+  .grand{margin-top:18px;background:var(--ink);color:#fff;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;border-radius:6px}
+  .grand .gl{font-size:11px;letter-spacing:.24em;text-transform:uppercase;font-weight:600}
+  .grand .gl small{display:block;font-weight:400;font-size:10px;letter-spacing:.12em;text-transform:none;color:#BFC6CC;margin-top:4px}
+  .grand .gv{font-weight:900;font-size:30px;line-height:1;color:var(--blue)}
+  .grand .gv.dim{color:#5E6A73}
+
+  .ftr{background:var(--grey);color:#fff;padding:18px 40px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+  .ftr .l{font-weight:900;font-size:22px;text-transform:uppercase;letter-spacing:-.01em}
+  .ftr .m,.ftr .r{font-size:10px;letter-spacing:.24em;text-transform:uppercase;font-weight:600}
+
+  .tools{max-width:860px;margin:10px auto 0;display:flex;justify-content:flex-end;gap:8px;padding:0 8px}
+  .tools button{font:inherit;font-weight:600;font-size:11px;letter-spacing:.12em;text-transform:uppercase;background:#fff;border:1px solid #C9CFD4;border-radius:6px;padding:8px 12px;cursor:pointer;color:var(--ink)}
+  .tools button:hover{border-color:var(--ink)}
+
+  /* ---------- phone layout ---------- */
+  .stick{display:none}
+  @media (max-width:640px){
+    .wrap{overflow:visible}
+    thead{display:none}
+    colgroup{display:none}
+    table,tbody{display:block;width:100%}
+    tr.sec,tr.box{display:block}
+    tr.sec td,tr.box td{display:block;width:100%}
+    tr.sec td{padding:18px 4px 6px}
+    tr.item,tr.promo{display:grid;grid-template-columns:1fr auto auto;grid-template-areas:"name name name" "std qty tot";column-gap:10px;row-gap:4px;padding:8px 8px 10px;margin-bottom:6px;border-radius:8px;align-items:center}
+    tr.item td,tr.promo td{display:block;padding:0 !important;background:transparent !important}
+    tr.item:nth-of-type(odd){background:var(--row)}
+    tr.item.has{background:#EAF6FE}
+    .gbox table tr.item:nth-of-type(odd){background:#E9E9E9}
+    .gbox table tr.item.has{background:#E3F2FC}
+    tr.item td.name,tr.promo td.name{grid-area:name;font-size:13px}
+    td.name .unit{display:block;margin:2px 0 0}
+    tr.item td.std,tr.promo td.std{grid-area:std;text-align:left;font-size:13px}
+    td.std .eff{display:inline;margin-left:6px;font-size:10px}
+    tr.item td.qty,tr.promo td.qty{grid-area:qty}
+    td.qty input{width:58px;font-size:15px;padding:7px 4px}
+    tr.item td.tot,tr.promo td.tot{grid-area:tot;min-width:78px;font-size:15px}
+    tr.item td.tot::before,tr.promo td.tot::before{content:"Total";display:block;font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600}
+    tr.promo{background:#FFF9EE;border:2px solid var(--gold);padding:10px}
+    tr.promo td{border:0 !important}
+    tr.promo.fee{margin-top:-4px}
+    tr.promo input.txt{max-width:none;font-size:13px}
+    .gbox{padding:10px 8px 10px}
+    .subtot,.drow{padding-left:4px;padding-right:4px}
+    .subtot .sv{font-size:24px}
+    .dctl{width:100%}
+    .dctl .pct{margin-left:auto}
+    .grand{padding:14px 16px}
+    .grand .gv{font-size:26px}
+    /* sticky total bar */
+    .stick{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--ink);color:#fff;padding:10px 16px;justify-content:space-between;align-items:center;gap:12px;box-shadow:0 -6px 18px rgba(0,0,0,.18)}
+    .stick .sl{font-size:9px;letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:#BFC6CC}
+    .stick .sl b{display:block;color:#fff;font-size:11px;margin-top:2px}
+    .stick .sv{font-weight:900;font-size:24px;color:var(--blue);font-variant-numeric:tabular-nums;white-space:nowrap}
+    .stick .sv small{display:block;font-size:10px;font-weight:600;color:#BFC6CC;text-align:right;letter-spacing:.04em}
+    .sheet{margin-bottom:0;padding-bottom:70px}
+  }
+  @media print{
+    body{background:#fff}
+    .tools,.chips,.stick{display:none}
+    .sheet{box-shadow:none;margin:0;max-width:none}
+    .hdr,.ftr,.pill,tr.item td,.gbox,.grand{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    td.qty input{border-color:transparent}
+    .cust{background:#fff}
+    .money input,input.txt{border-bottom-color:transparent !important}
+  }
+
+  /* ===== Coconut Club tab ===== */
+  [hidden]{display:none !important}
+  :root{
+    color-scheme:light;
+    --cc-ink:#111111; --cc-ink2:#4A4A4A; --cc-mute:#7A848C; --cc-line:#DDE3E8;
+    --cc-tint:#EEF8FF; --cc-tint2:#F6FAFC; --cc-gold-tint:#FBF5EA;
+    --winter:#5BA4D9; --spring:#4FA36B; --summer:#E0A21B; --fall:#C8693A;
+    --display:"Montserrat",Helvetica,Arial,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  }
+  body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:40;background:var(--page)}
+  .tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--page);padding:10px max(8px,env(safe-area-inset-left,0px)) 8px max(8px,env(safe-area-inset-right,0px))}
+  .tabs-in{max-width:860px;margin:0 auto;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+  .tab{font:inherit;font-weight:800;font-size:12px;letter-spacing:.14em;text-transform:uppercase;border:1.5px solid #C9CFD4;background:#fff;color:var(--ink);padding:10px 16px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+  .tab:hover{border-color:var(--ink)}
+  .tab[aria-selected="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+  .tab.club[aria-selected="true"]{background:var(--blue);border-color:var(--blue)}
+  .tab .dot{width:8px;height:8px;border-radius:50%;background:var(--gold)}
+  .tab:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+  .tab-sp{flex:1}
+  .tools{margin-top:0}
+  body.on-club .stick{display:none !important}
+
+  .cc{max-width:860px;margin:6px auto 0;background:#fff;box-shadow:0 10px 30px rgba(0,0,0,.10);padding-bottom:110px}
+  @media (max-width:900px){.cc{margin:0}}
+  .cc-hdr{background:var(--ink);color:#fff;padding:34px 40px 30px;position:relative;overflow:hidden}
+  .cc-hdr::after{content:"";position:absolute;right:-60px;top:-60px;width:240px;height:240px;border-radius:50%;border:28px solid var(--blue);opacity:.9}
+  .cc-hdr .eyebrow{font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);font-weight:600}
+  .cc-hdr h2{margin:8px 0 0;font-weight:900;font-size:44px;line-height:.95;text-transform:uppercase;letter-spacing:-.01em;position:relative;z-index:1}
+  .cc-hdr h2 span{color:var(--blue)}
+  .cc-hdr p{margin:12px 0 0;max-width:46ch;font-weight:300;font-size:14px;color:#D7DDE2;position:relative;z-index:1}
+  .perks{display:grid;grid-template-columns:repeat(4,1fr);background:var(--blue);color:#fff}
+  .perk{padding:16px 18px;border-right:1px solid rgba(255,255,255,.28)}
+  .perk:last-child{border-right:0}
+  .perk b{display:block;font-weight:900;font-size:22px;line-height:1}
+  .perk span{display:block;font-size:10px;letter-spacing:.16em;text-transform:uppercase;margin-top:6px;font-weight:600;color:#E6F5FF}
+  @media (max-width:640px){.cc-hdr{padding:26px 16px 22px}.cc-hdr h2{font-size:34px}.perks{grid-template-columns:repeat(2,1fr)}.perk:nth-child(2){border-right:0}.perk:nth-child(-n+2){border-bottom:1px solid rgba(255,255,255,.28)}}
+
+  .cc-sec{padding:28px 40px 6px}
+  @media (max-width:640px){.cc-sec{padding:22px 14px 4px}}
+  .cc-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 14px;border-bottom:2px solid var(--ink);padding-bottom:8px}
+  .cc-h h3{margin:0;font-weight:900;font-size:20px;text-transform:uppercase;letter-spacing:.01em}
+  .cc-h .step{font-family:var(--mono);font-size:11px;color:var(--blue);font-weight:600;letter-spacing:.06em;margin-right:8px}
+  .cc-h small{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--cc-mute);font-weight:600}
+
+  /* customer fields */
+  .fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 18px}
+  .fld{display:flex;flex-direction:column;gap:4px;min-width:0}
+  .fld.wide{grid-column:1/-1}
+  .fld label{font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:var(--cc-ink2)}
+  .fld input,.fld textarea{font:inherit;font-size:16px;font-weight:600;border:1.5px solid #C9CFD4;border-radius:8px;padding:10px 12px;background:#fff;color:var(--ink);width:100%}
+  .fld textarea{min-height:76px;resize:vertical;font-weight:400}
+  .fld input:focus,.fld textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px #CFEBFD}
+  .fld input.err{border-color:#C0392B;box-shadow:0 0 0 3px #F6D5D1}
+  @media (max-width:520px){.fields{grid-template-columns:1fr}}
+
+  /* health highlights */
+  .why{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+  .why-c{background:var(--cc-tint2);border:1px solid var(--cc-line);border-radius:10px;padding:14px 14px 16px;min-width:0}
+  .why-c svg{width:34px;height:34px;color:var(--blue)}
+  .why-c h4{margin:8px 0 6px;font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.04em}
+  .why-c p{margin:0;font-size:12px;color:var(--cc-ink2);line-height:1.45}
+  @media (max-width:760px){.why{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+  /* prescription grid */
+  .rx-cat{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--blue);font-weight:600;margin:20px 0 8px}
+  .rx-cat:first-child{margin-top:4px}
+  .rx-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+  .rx{border:1.5px solid var(--cc-line);border-radius:12px;background:#fff;padding:10px;display:flex;flex-direction:column;gap:8px;min-width:0;transition:border-color .15s,background .15s}
+  .rx.on{border-color:var(--blue);background:var(--cc-tint);box-shadow:0 0 0 1px var(--blue) inset}
+  .rx .th{aspect-ratio:4/3;max-width:100%;border-radius:8px;background:linear-gradient(160deg,#F1F8FD,#E1F1FC);display:flex;align-items:center;justify-content:center;color:var(--blue);position:relative}
+  .rx.on .th{background:var(--blue);color:#fff}
+  .rx .th svg{width:46%;height:auto}
+  .rx .th .q{position:absolute;top:6px;right:6px;background:var(--gold);color:#fff;font-weight:900;font-size:12px;min-width:24px;height:24px;border-radius:12px;display:none;align-items:center;justify-content:center;padding:0 7px}
+  .rx.on .th .q{display:flex}
+  .rx .nm{font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.02em;line-height:1.15}
+  .rx .un{display:block;font-weight:400;font-size:9.5px;letter-spacing:.16em;color:var(--cc-mute);margin-top:3px}
+  .rx .pr{display:flex;align-items:baseline;gap:6px;font-variant-numeric:tabular-nums;flex-wrap:wrap}
+  .rx .pr s{color:var(--cc-mute);font-size:12px}
+  .rx .pr b{color:var(--blue);font-weight:900;font-size:16px}
+  .rx .pr i{font-style:normal;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--cc-mute);font-weight:600}
+  .rx .pr b.free{color:var(--gold)}
+  .stp{display:grid;grid-template-columns:38px 1fr 38px;border:1.5px solid #C9CFD4;border-radius:9px;overflow:hidden;background:#fff;margin-top:auto}
+  .stp button{font:inherit;font-weight:900;font-size:18px;border:0;background:#F3F5F7;color:var(--ink);cursor:pointer;height:38px}
+  .stp button:active{background:#E2E7EB}
+  .stp button:focus-visible{outline:2px solid var(--blue);outline-offset:-2px}
+  .stp input{font:inherit;font-weight:800;font-size:16px;text-align:center;border:0;width:100%;min-width:0;color:var(--ink);background:#fff;-moz-appearance:textfield}
+  .stp input::-webkit-outer-spin-button,.stp input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .stp input:focus{outline:none;background:#F4FBFF}
+  .rx.on .stp{border-color:var(--blue)}
+  .tgl{font:inherit;font-weight:800;font-size:11px;letter-spacing:.12em;text-transform:uppercase;border:1.5px solid var(--gold);color:var(--gold);background:#fff;border-radius:9px;height:41px;cursor:pointer;margin-top:auto}
+  .rx.on .tgl{background:var(--gold);color:#fff}
+
+  /* air duct */
+  .duct{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:20px;align-items:start}
+  @media (max-width:700px){.duct{grid-template-columns:1fr}}
+  .ba{position:relative;aspect-ratio:16/10;max-width:100%;border-radius:12px;overflow:hidden;background:#20262C;user-select:none;touch-action:pan-y}
+  .ba .layer{position:absolute;inset:0}
+  .ba .layer svg,.ba .layer img{width:100%;height:100%;object-fit:cover;display:block}
+  .ba .before{clip-path:inset(0 50% 0 0)}
+  .ba .handle{position:absolute;top:0;bottom:0;left:50%;width:3px;background:#fff;transform:translateX(-1.5px);pointer-events:none;box-shadow:0 0 8px rgba(0,0,0,.4)}
+  .ba .handle::after{content:"";position:absolute;top:50%;left:50%;width:38px;height:38px;border-radius:50%;background:#fff;transform:translate(-50%,-50%);box-shadow:0 2px 10px rgba(0,0,0,.35)}
+  .ba .handle i{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1;font-style:normal;font-weight:900;font-size:13px;color:var(--ink);letter-spacing:-.05em;white-space:nowrap}
+  .ba .tagl,.ba .tagr{position:absolute;top:10px;font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-weight:800;padding:5px 9px;border-radius:5px}
+  .ba .tagl{left:10px;background:rgba(17,17,17,.82);color:#fff}
+  .ba .tagr{right:10px;background:var(--blue);color:#fff}
+  .ba input[type=range]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:ew-resize;margin:0}
+  .ba-cap{font-size:11px;color:var(--cc-mute);margin:8px 2px 0;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  .ba-cap button{font:inherit;font-size:11px;font-weight:600;color:var(--blue);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline}
+  .duct-pts{display:flex;flex-direction:column;gap:12px}
+  .duct-pts h4{margin:0;font-weight:900;font-size:18px;text-transform:uppercase;line-height:1.1}
+  .duct-pts ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px}
+  .duct-pts li{display:grid;grid-template-columns:18px 1fr;gap:8px;font-size:13px;color:var(--cc-ink2)}
+  .duct-pts li::before{content:"";width:10px;height:10px;margin-top:4px;border-radius:2px;background:var(--blue)}
+  .duct-pts li b{color:var(--ink)}
+  .rate{display:flex;gap:10px;flex-wrap:wrap}
+  .rate div{flex:1;min-width:120px;border:1.5px solid var(--cc-line);border-radius:10px;padding:10px 12px}
+  .rate div.m{border-color:var(--blue);background:var(--cc-tint)}
+  .rate small{display:block;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--cc-mute);font-weight:600}
+  .rate b{font-weight:900;font-size:20px;font-variant-numeric:tabular-nums}
+  .rate .m b{color:var(--blue)}
+
+  /* photos */
+  .ph-btns{display:flex;gap:10px;flex-wrap:wrap}
+  .btn{font:inherit;font-weight:800;font-size:12px;letter-spacing:.12em;text-transform:uppercase;border-radius:10px;padding:13px 18px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--ink);background:#fff;color:var(--ink)}
+  .btn svg{width:18px;height:18px}
+  .btn.pri{background:var(--blue);border-color:var(--blue);color:#fff}
+  .btn.dark{background:var(--ink);color:#fff}
+  .btn.gold{background:var(--gold);border-color:var(--gold);color:#fff}
+  .btn:disabled{opacity:.55;cursor:default}
+  .btn:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+  .ph-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:14px}
+  .ph{border:1px solid var(--cc-line);border-radius:10px;overflow:hidden;background:#fff;display:flex;flex-direction:column;min-width:0}
+  .ph img{width:100%;aspect-ratio:1;object-fit:cover;display:block;background:#EEF1F3}
+  .ph .row{display:flex;gap:6px;padding:6px}
+  .ph select{font:inherit;font-size:12px;font-weight:600;flex:1;min-width:0;border:1px solid #C9CFD4;border-radius:6px;padding:6px 4px;background:#fff;color:var(--ink)}
+  .ph .x{font:inherit;font-weight:900;border:1px solid #C9CFD4;background:#fff;border-radius:6px;width:32px;cursor:pointer;color:#B3261E}
+  .ph-empty{margin-top:14px;border:1.5px dashed #C9CFD4;border-radius:10px;padding:22px;text-align:center;color:var(--cc-mute);font-size:13px}
+
+  /* seasonal calendar */
+  .cal{display:flex;gap:6px}
+  .cal .sg{display:flex;flex-direction:column;gap:6px;min-width:0}
+  .cal .sn{display:flex;align-items:center;justify-content:center;gap:6px;color:#fff;font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-weight:800;padding:7px 4px;border-radius:7px}
+  .cal .sn svg{width:14px;height:14px;flex:none}
+  .cal .ms{display:flex;gap:6px}
+  .mo{flex:1;min-width:0;position:relative}
+  .mo input{position:absolute;opacity:0;pointer-events:none}
+  .mo span{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border:1.5px solid var(--cc-line);border-radius:9px;padding:12px 2px 10px;cursor:pointer;font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.04em;background:#fff;color:var(--ink);min-height:74px}
+  .mo span::after{content:"";width:18px;height:18px;border-radius:5px;border:1.5px solid #B8C2CA;background:#fff}
+  .mo input:checked + span{color:#fff;border-color:transparent}
+  .mo input:checked + span::after{border-color:#fff;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23111' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/14px no-repeat}
+  .mo input:focus-visible + span{outline:2px solid var(--blue);outline-offset:2px}
+  .s-winter .sn,.s-winter input:checked + span{background:var(--winter)}
+  .s-spring .sn,.s-spring input:checked + span{background:var(--spring)}
+  .s-summer .sn,.s-summer input:checked + span{background:var(--summer)}
+  .s-fall .sn,.s-fall input:checked + span{background:var(--fall)}
+  .cal.cal-wide{display:flex}
+  .cal.cal-narrow{display:none}
+  @media (max-width:640px){.cal.cal-wide{display:none}.cal.cal-narrow{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.cal-narrow .sg{width:auto}}
+  .cal-meta{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:12px}
+  .cal-meta .sum{font-size:13px;color:var(--cc-ink2)}
+  .cal-meta .sum b{color:var(--ink)}
+  .chip2{font:inherit;font-weight:600;font-size:11px;letter-spacing:.1em;padding:8px 12px;border-radius:999px;border:1px solid var(--cc-line);background:#fff;color:var(--cc-ink2);cursor:pointer}
+  .chip2:hover{border-color:var(--ink);color:var(--ink)}
+
+  /* summary */
+  .rx-sum{border:2px solid var(--ink);border-radius:12px;overflow:hidden}
+  .rx-lines{padding:6px 16px 4px}
+  .rx-lines .ln{display:grid;grid-template-columns:1fr auto auto;gap:14px;padding:8px 0;border-bottom:1px solid var(--cc-line);font-size:13px;align-items:baseline;font-variant-numeric:tabular-nums}
+  .rx-lines .ln:last-child{border-bottom:0}
+  .rx-lines .ln b{font-weight:800;text-transform:uppercase;font-size:12.5px;letter-spacing:.02em}
+  .rx-lines .ln small{color:var(--cc-mute);font-size:11px;margin-left:6px}
+  .rx-lines .ln s{color:var(--cc-mute)}
+  .rx-lines .ln em{font-style:normal;font-weight:800;color:var(--blue);min-width:70px;text-align:right}
+  .rx-lines .none{padding:14px 0;color:var(--cc-mute);font-size:13px}
+  .rx-tot{background:var(--cc-tint2);border-top:2px solid var(--ink);padding:14px 16px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;font-variant-numeric:tabular-nums}
+  .rx-tot div small{display:block;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--cc-mute);font-weight:600}
+  .rx-tot div b{font-weight:900;font-size:22px}
+  .rx-tot .sv b{color:var(--gold)}
+  .rx-tot .mb b{color:var(--blue)}
+  .rx-start{background:var(--ink);color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+  .rx-start .l{font-size:11px;letter-spacing:.22em;text-transform:uppercase;font-weight:600}
+  .rx-start .l small{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:11px;letter-spacing:.06em;text-transform:none;color:#BFC6CC;font-weight:400;margin-top:5px}
+  .rx-start .l small input{font:inherit;font-weight:800;color:#fff;background:transparent;border:0;border-bottom:1px dashed #8C969E;width:64px;text-align:right;-moz-appearance:textfield}
+  .rx-start .l small input::-webkit-outer-spin-button,.rx-start .l small input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .rx-start .l small input:focus{outline:2px solid var(--blue);outline-offset:2px}
+  .rx-start .v{font-weight:900;font-size:30px;color:var(--blue);font-variant-numeric:tabular-nums}
+  @media (max-width:520px){.rx-tot{grid-template-columns:1fr 1fr}.rx-tot .mb{grid-column:1/-1}}
+
+  .office-note{font-size:12px;color:var(--cc-ink2);margin:14px 0 0;line-height:1.6}
+  .office-note code{font-family:var(--mono);font-size:11.5px;background:var(--cc-tint);padding:1px 5px;border-radius:4px;color:var(--ink)}
+
+  /* sticky club bar */
+  .cc-bar{position:fixed;left:0;right:0;bottom:0;z-index:25;background:var(--ink);color:#fff;box-shadow:0 -6px 18px rgba(0,0,0,.18);padding:10px max(16px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+  .cc-bar-in{max-width:860px;margin:0 auto;display:flex;align-items:center;gap:14px}
+  .cc-bar .k{font-size:9px;letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:#BFC6CC}
+  .cc-bar .k b{display:block;color:#fff;font-size:11px;margin-top:3px;letter-spacing:.08em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:42vw}
+  .cc-bar .v{font-weight:900;font-size:24px;color:var(--blue);font-variant-numeric:tabular-nums;margin-left:auto;text-align:right;white-space:nowrap}
+  .cc-bar .v small{display:block;font-size:10px;color:#BFC6CC;font-weight:600;letter-spacing:.04em}
+  .cc-bar .btn{padding:13px 16px}
+  @media (max-width:420px){.cc-bar .v{font-size:20px}.cc-bar .btn{padding:12px 12px;font-size:11px}}
+
+  /* modal */
+  .ov{position:fixed;inset:0;z-index:60;background:rgba(17,17,17,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+  .md{background:#fff;border-radius:14px;max-width:520px;width:100%;max-height:calc(100% - 20px);overflow:auto;padding:24px 22px 20px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+  .md .ok{width:52px;height:52px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;color:#fff}
+  .md .ok.warn{background:var(--gold)}
+  .md h4{margin:14px 0 6px;font-weight:900;font-size:22px;text-transform:uppercase}
+  .md p{margin:0 0 10px;font-size:13.5px;color:var(--cc-ink2)}
+  .md .addr{display:flex;gap:8px;align-items:center;background:var(--cc-tint);border-radius:8px;padding:10px 12px;font-weight:800;font-size:14px;margin:6px 0 14px;flex-wrap:wrap}
+  .md .addr span{flex:1;min-width:0;user-select:all;word-break:break-all}
+  .md .acts{display:flex;flex-direction:column;gap:8px}
+  .md .acts .btn{justify-content:center;text-decoration:none}
+  .md textarea{width:100%;min-height:120px;font-family:var(--mono);font-size:11px;border:1px solid var(--cc-line);border-radius:8px;padding:8px;margin-top:10px;color:var(--ink);background:#fff}
+  .md .prog{font-family:var(--mono);font-size:12px;color:var(--cc-mute)}
+
+  /* office */
+  .of-list{display:flex;flex-direction:column;gap:10px}
+  .of{border:1.5px solid var(--cc-line);border-radius:12px;overflow:hidden}
+  .of.done{opacity:.72}
+  .of summary{list-style:none;cursor:pointer;padding:14px 16px;display:grid;grid-template-columns:1fr auto;gap:4px 14px;align-items:center}
+  .of summary::-webkit-details-marker{display:none}
+  .of summary b{font-weight:900;text-transform:uppercase;font-size:15px}
+  .of summary .mt{font-size:11.5px;color:var(--cc-mute);grid-column:1}
+  .of summary .am{grid-row:1/3;grid-column:2;text-align:right;font-weight:900;color:var(--blue);font-size:18px;font-variant-numeric:tabular-nums}
+  .of summary .am small{display:block;font-size:10px;color:var(--cc-mute);font-weight:600}
+  .of .bd{padding:0 16px 16px;border-top:1px solid var(--cc-line)}
+  .of .kv{display:grid;grid-template-columns:110px 1fr;gap:6px 12px;font-size:13px;margin:12px 0}
+  .of .kv span{color:var(--cc-mute);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;padding-top:2px}
+  .of .mos{display:flex;gap:4px;flex-wrap:wrap}
+  .of .mos i{font-style:normal;font-size:11px;font-weight:800;padding:3px 7px;border-radius:5px;color:#fff}
+  .of .phs{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin:10px 0}
+  .of .phs a{display:block;border-radius:8px;overflow:hidden;border:1px solid var(--cc-line);text-decoration:none;color:var(--ink)}
+  .of .phs img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
+  .of .phs small{display:block;font-size:10px;padding:4px 6px;font-weight:600}
+  .of .card-ck{display:flex;align-items:center;gap:8px;font-weight:800;font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin-top:6px;cursor:pointer}
+  .of .card-ck input{width:20px;height:20px;accent-color:var(--blue)}
+  .pill2{display:inline-block;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:800;padding:3px 7px;border-radius:5px;background:var(--cc-gold-tint);color:#8A6B34;margin-left:8px;vertical-align:middle}
+  .pill2.ok{background:#E3F4E8;color:#2F7A47}
+  .of-empty{border:1.5px dashed #C9CFD4;border-radius:12px;padding:26px;text-align:center;color:var(--cc-mute);font-size:13px}
+  .notice{background:var(--cc-gold-tint);border:1px solid #E8D8B8;color:#6E5527;border-radius:10px;padding:12px 14px;font-size:12.5px;margin:0 0 14px}
+  .meter{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--cc-tint2);border:1px solid var(--cc-line);border-radius:10px;padding:12px 14px;margin-bottom:14px}
+  .meter .dots{display:flex;gap:6px}
+  .meter .dots i{width:30px;height:30px;border-radius:50%;border:2px dashed #B8C2CA;display:flex;align-items:center;justify-content:center;font-style:normal;font-weight:900;font-size:12px;color:#B8C2CA}
+  .meter .dots i.on{border:0;color:#fff}
+  .meter .dots i.x{border:2px solid var(--blue);color:var(--blue)}
+  .meter p{margin:0;font-size:13px;color:var(--cc-ink2);flex:1;min-width:180px}
+  .meter p b{color:var(--ink)}
+  .meter.ok{border-color:var(--blue);background:var(--cc-tint)}
+  .yr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0;border:2px solid var(--ink);border-radius:12px;overflow:hidden;margin-bottom:14px}
+  .yr div{padding:16px 18px}
+  .yr div+div{border-left:2px solid var(--ink);background:var(--ink);color:#fff}
+  .yr small{display:block;font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-weight:600;color:var(--cc-mute)}
+  .yr div+div small{color:#BFC6CC}
+  .yr b{display:block;font-weight:900;font-size:40px;line-height:1;margin:6px 0 4px;font-variant-numeric:tabular-nums}
+  .yr div+div b{color:var(--blue)}
+  .yr span{font-size:12px;color:var(--cc-ink2)}
+  .yr div+div span{color:#D7DDE2}
+  @media (max-width:520px){.yr{grid-template-columns:1fr}.yr div+div{border-left:0;border-top:2px solid var(--ink)}.yr b{font-size:34px}}
+  .visits{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+  .vc{border:1.5px solid var(--cc-line);border-radius:12px;overflow:hidden;background:#fff;min-width:0;display:flex;flex-direction:column}
+  .vc .vh{color:#fff;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .vc .vh b{font-weight:900;font-size:16px;text-transform:uppercase}
+  .vc .vh span{font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;opacity:.92;display:flex;align-items:center;gap:5px}
+  .vc .vh svg{width:13px;height:13px}
+  .vc .vb{padding:10px;display:flex;flex-wrap:wrap;gap:6px}
+  .vc .vf{margin-top:auto;padding:8px 12px;border-top:1px solid var(--cc-line);font-size:11px;color:var(--cc-mute);font-weight:600;letter-spacing:.06em}
+  .vchip{font:inherit;display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--blue);background:var(--cc-tint);color:var(--ink);border-radius:999px;padding:5px 10px 5px 6px;font-size:11.5px;font-weight:700;cursor:pointer;max-width:100%}
+  .vchip svg{width:18px;height:18px;color:var(--blue);flex:none}
+  .vchip em{font-style:normal;color:var(--cc-mute);font-weight:600}
+  .vchip.off{border-color:var(--cc-line);background:#fff;color:#A3ACB3;text-decoration:line-through}
+  .vchip.off svg{color:#C4CBD0}
+  .vchip:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+  .vc-empty{grid-column:1/-1;border:1.5px dashed #C9CFD4;border-radius:12px;padding:22px;text-align:center;color:var(--cc-mute);font-size:13px}
+  .times{font-weight:900;color:var(--blue);white-space:nowrap}
+  .times.one{color:var(--gold)}
+  @media (prefers-reduced-motion:reduce){*{transition:none !important}}
+
+
+  /* ===== customer signature (Coconut Club tab) ===== */
+  .sig-sec{margin-top:20px;border-top:2px solid var(--ink);padding-top:16px}
+  .sig-agree{margin:0 0 12px;font-size:13px;line-height:1.5;color:var(--cc-ink2)}
+  .ph-cap{font-size:12px;color:#8A6B34;margin:10px 2px 0}
+</style>
+</head>
+<body>
+
+
+<noscript><div style="background:#B3261E;color:#fff;font-family:Arial,sans-serif;font-weight:700;padding:14px 16px;text-align:center">This price sheet is being viewed as a preview, so the calculator is off. Open it in Safari or Chrome to enter quantities and see totals.</div></noscript>
+<div id="jsErr" hidden style="background:#B3261E;color:#fff;font-weight:700;padding:10px 16px;text-align:center"></div>
+<nav class="tabs" aria-label="Sheets"><div class="tabs-in" role="tablist">
+  <button type="button" class="tab" role="tab" data-tab="price-sheet" aria-selected="true">Price Sheet</button>
+  <button type="button" class="tab club" role="tab" data-tab="club" aria-selected="false"><span class="dot"></span>The Coconut Club</button>
+</div></nav>
+<section id="tab-sheet">
+<div class="tools">
+  <button type="button" id="clearQty">Clear quantities</button>
+  <button type="button" id="reset">Reset all</button>
+</div>
+
+<div class="sheet">
+  <div class="hdr">
+    <h1 class="logo">Coconut<span>Price Sheet Calculator</span></h1>
+    <div class="tag"><b>Raising the Standard of the Home</b><i>Every Customer Deserves World Class Care</i></div>
+  </div>
+
+  <div class="cust">
+    <label for="custName">Customer</label>
+    <input id="custName" type="text" placeholder="Customer name" autocomplete="off" aria-label="Customer name">
+    <span class="date" id="estDate"></span><span class="date" id="jsOk" style="color:#1BA9FA">calculator off</span>
+  </div>
+
+  <div class="body">
+    <div class="wrap">
+    <table id="main">
+      <colgroup><col class="c-svc"><col class="c-std"><col class="c-qty"><col class="c-tot"></colgroup>
+      <thead>
+        <tr>
+          <th>Service</th>
+          <th>Standard</th>
+          <th class="qty">Quantity</th>
+          <th class="tot"><span class="pill">Total<small id="hdrPct">0% off</small></span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="promo">
+          <td class="name">
+            <div class="lbl"><span>Promotional Service</span></div>
+            <input class="txt" id="promoName" type="text" placeholder="Type the promo (e.g. 3 rooms carpet)" aria-label="Promotional service name">
+          </td>
+          <td class="std"><span class="money">$<input id="promoPrice" type="number" min="0" step="1" placeholder="0" aria-label="Promotional price"></span></td>
+          <td class="qty"><input id="promoQty" type="number" min="0" step="1" placeholder="0" inputmode="numeric" aria-label="Promotional quantity"></td>
+          <td class="tot zero" id="promoOut">$0</td>
+        </tr>
+        <tr class="promo fee">
+          <td class="name">
+            <div class="lbl"><span>Environmental Fee</span></div>
+          </td>
+          <td class="std"><span class="money">$<input id="feePrice" type="number" min="0" step="1" placeholder="0" inputmode="decimal" aria-label="Environmental fee amount"></span></td>
+          <td class="qty"><input id="feeQty" type="number" min="0" step="1" placeholder="0" inputmode="numeric" aria-label="Environmental fee quantity"></td>
+          <td class="tot zero" id="feeOut">$0</td>
+        </tr>
+
+        <tr class="sec"><td colspan="4">Flooring</td></tr>
+        <tr class="item"><td class="name">Carpet<span class="unit">Per Area</span></td><td class="std" data-p="88">$88</td><td class="qty"><input type="number" min="0" step="1" placeholder="0" inputmode="numeric" aria-label="Carpet quantity"></td><td class="tot zero">$0.00</td></tr>
+        <tr class="item"><td class="name">Stairs</td><td class="std" data-p="112">$112</td><td class="qty"><input type="number" min="0" step="1" placeholder="0" inputmode="numeric" aria-label="Stairs quantity"></td><td class="tot zero">$0.00</td></tr>
+        <tr class="item"><td class="name">Hallway<span class="unit">Per Lin. Ft</span></td><td class="std" data-p="4.70">$4.70</td><td class="qty"><input type="number" min="0" step="1" placeholder="0" inputmode="decimal" aria-label="Hallway linear feet"></td><td class="tot zero">$0.00</td></tr>
+        <tr class="item"><td class="name">Bathroom<span class="unit">Per Lin. Ft</span></td><td class="std" data-p="4.70">$4.70</td><td class="qty"><input type="number" min="0" step="1" placeholder="0" inputmode="decimal" aria-label="Bathroom linear feet"></td><td class="tot zero">$0.00</td></tr>
+        <tr class="item"><td class="name">Laundry Room<span class="unit">Per Lin. Ft</span></td><td class="std" data-p="4.70">$4.70</td><td class="qty"><input type="number" min="0" step="1" placeholder="0" inputmode="decimal" aria-label="Laundry room linear feet"></td><td class="tot zero">$0.00</td></tr>
+        <tr class="item"><td class="name">Closet<span class="unit">Per Lin. Ft</span></td><td class="std" data-p="4.70">$4.70</td><td class="qty"><input type="number" min="0" step="1" placeholder="0" inputmode="decimal" aria-label="Closet linear feet"></td><td class="tot zero">$0.00</td></tr>
+        <tr class="item"><td class="name">Tile &amp; Grout<span class="unit">Per Area</span></td><td class="std" data-p="112">$112</td><td class="qty"><input type="number" min="0" step="1" placeholder="0" inputmode="numeric" aria-label="Tile and grout quantity"></td><td class="tot zero">$0.00</td></tr>
+        <tr class="item"><td class="name">Wood</td><td class="std" data-p="132">$132</td><td class="qty"><input type="number" min="0" step="1" placeholder="0" inputmode="numeric" aria-label="Wood quantity"></td><td class="tot zero">$0.00</td></tr>
+        <tr class="item"><td class="name">Area Rugs<span class="unit">Per Sq Ft</span></td><td class="std" data-p="2.64">$2.64</td><td class="qty"><input type="number" min="0" step="1" placeholder="0" inputmode="decimal" aria-label="Area rug square feet"></td><td class="tot zero">$0.00</td></tr>
+
+        <tr class="sec"><td colspan="4">Upholstery</td></tr>
+        <tr class="item"><td class="name">Sectional</td><td class="std" data-p="438">$438</td><td class="qty"><input type="number" min="0" step="1" placeholder="0" inputmode="numeric" aria-label="Sectional quantity"></td><td class="tot zero">$0.00</td></tr>
+        <tr class="item"><td class="name">Sofa</td><td class="std" data-p="250">$250</td><td class="qty"><input type="number" min="0" step="1" placeholder="0" inputmode="numeric" aria-label="Sofa quantity"></td><td class="tot zero">$0.00</td></tr>
+        <tr class="item"><td class="name">Love Seat</td><td class="std" data-p="206">$206</td><td class="qty"><input type="number" min="0" step="1" placeholder="0" inputmode="numeric" aria-label="Love seat quantity"></td><td class="tot zero">$0.00</td></tr>
+        <tr class="item"><td class="name">Chair</td><td class="std" data-p="113">$113</td><td class="qty"><input type="number" min="0" step="1" placeholder="0" inputmode="numeric" aria-label="Chair quantity"></td><td class="tot zero">$0.00</td></tr>
+        <tr class="item"><td class="name">Dining Chair</td><td class="std" data-p="30">$30</td><td class="qty"><input type="number" min="0" step="1" placeholder="0" inputmode="numeric" aria-label="Dining chair quantity"></td><td class="tot zero">$0.00</td></tr>
+        <tr class="item"><td class="name">Ottoman</td><td class="std" data-p="95">$95</td><td class="qty"><input type="number" min="0" step="1" placeholder="0" inputmode="numeric" aria-label="Ottoman quantity"></td><td class="tot zero">$0.00</td></tr>
+
+        <tr class="sec"><td colspan="4">Specialty</td></tr>
+        <tr class="item"><td class="name">Car Interior</td><td class="std" data-p="180">$180</td><td class="qty"><input type="number" min="0" step="1" placeholder="0" inputmode="numeric" aria-label="Car interior quantity"></td><td class="tot zero">$0.00</td></tr>
+        <tr class="item"><td class="name">Countertop Clean &amp; Seal</td><td class="std" data-p="211">$211</td><td class="qty"><input type="number" min="0" step="1" placeholder="0" inputmode="numeric" aria-label="Countertop quantity"></td><td class="tot zero">$0.00</td></tr>
+        <tr class="item"><td class="name">Mattress</td><td class="std" data-p="245">$245</td><td class="qty"><input type="number" min="0" step="1" placeholder="0" inputmode="numeric" aria-label="Mattress quantity"></td><td class="tot zero">$0.00</td></tr>
+        <tr class="item"><td class="name">Shower</td><td class="std" data-p="219">$219</td><td class="qty"><input type="number" min="0" step="1" placeholder="0" inputmode="numeric" aria-label="Shower quantity"></td><td class="tot zero">$0.00</td></tr>
+
+        <tr class="box"><td colspan="4">
+          <div class="gbox">
+            <p class="t">Protect Your Investment</p>
+            <table>
+              <colgroup><col class="c-svc"><col class="c-std"><col class="c-qty"><col class="c-tot"></colgroup>
+              <tr class="item"><td class="name">Protectant<span class="unit">Carpet · Upholstery</span></td><td class="std" data-p="36">$36</td><td class="qty"><input type="number" min="0" step="1" placeholder="0" inputmode="numeric" aria-label="Protectant areas"></td><td class="tot zero">$0.00</td></tr>
+              <tr class="item"><td class="name">Sealant<span class="unit">Tile &amp; Grout · Stone</span></td><td class="std" data-p="63">$63</td><td class="qty"><input type="number" min="0" step="1" placeholder="0" inputmode="numeric" aria-label="Sealant areas"></td><td class="tot zero">$0.00</td></tr>
+              <tr class="item"><td class="name">Hallway Protectant<span class="unit">Per Lin. Ft</span></td><td class="std" data-p="2.35">$2.35</td><td class="qty"><input type="number" min="0" step="1" placeholder="0" inputmode="decimal" aria-label="Hallway protectant linear feet"></td><td class="tot zero">$0.00</td></tr>
+              <tr class="item"><td class="name">Hallway Sealant<span class="unit">Per Lin. Ft</span></td><td class="std" data-p="2.35">$2.35</td><td class="qty"><input type="number" min="0" step="1" placeholder="0" inputmode="decimal" aria-label="Hallway sealant linear feet"></td><td class="tot zero">$0.00</td></tr>
+            </table>
+            <p class="note">Add to any cleaning above. Extends the life of the clean and the surface. Priced per area; hallways per linear foot.</p>
+          </div>
+        </td></tr>
+
+        <tr class="box"><td colspan="4">
+          <div class="gbox">
+            <p class="t">Biological Decontamination &amp; Restoration</p>
+            <table>
+              <colgroup><col class="c-svc"><col class="c-std"><col class="c-qty"><col class="c-tot"></colgroup>
+              <tr class="item"><td class="name">Urine Decon<span class="unit">Topical</span></td><td class="std" data-p="99">$99</td><td class="qty"><input type="number" min="0" step="1" placeholder="0" inputmode="numeric" aria-label="Topical urine decon quantity"></td><td class="tot zero">$0.00</td></tr>
+              <tr class="item"><td class="name">Urine Decon<span class="unit">Sub-Surface · Per Spot</span></td><td class="std" data-p="99">$99</td><td class="qty"><input type="number" min="0" step="1" placeholder="0" inputmode="numeric" aria-label="Sub-surface urine decon spots"></td><td class="tot zero">$0.00</td></tr>
+              <tr class="item"><td class="name">Hallway Urine Topical<span class="unit">Per Lin. Ft</span></td><td class="std" data-p="2.35">$2.35</td><td class="qty"><input type="number" min="0" step="1" placeholder="0" inputmode="decimal" aria-label="Hallway urine topical linear feet"></td><td class="tot zero">$0.00</td></tr>
+            </table>
+            <p class="note">Includes enzyme restoration and deodorizer treatment. Applied in addition to cleaning services above.</p>
+            <p class="guar">30 Day Satisfaction Guarantee</p>
+          </div>
+        </td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="subtot">
+      <div class="sl">Standard Total<small>All services at standard price · before discount</small></div>
+      <div class="sv dim" id="stdTotal">$0</div>
+    </div>
+    <div class="saves" id="saves" hidden><span>Discount applied to services</span><b id="saveAmt">−$0</b></div>
+
+    <div class="drow">
+      <div class="lbl">Discount<small>Tap a tier to apply it, tap again to remove it. Promotional Service stays fixed.</small></div>
+      <div class="dctl">
+        <div class="chips" role="group" aria-label="Quick discounts">
+          <button type="button" class="chip" data-v="20" data-k="s20">Seasonal 20%</button>
+          <button type="button" class="chip" data-v="30" data-k="s30">Seasonal 30%</button>
+          <button type="button" class="chip club" data-v="50" data-k="club">Club 50%</button>
+          <button type="button" class="chip vip" data-v="30" data-k="vip">VIP 30%</button>
+        </div>
+        <label class="pct"><input id="pct" type="number" min="0" max="100" step="1" value="0" inputmode="numeric" aria-label="Discount percent"><b>% OFF</b></label>
+      </div>
+    </div>
+
+    <div class="grand">
+      <div class="gl">Job Total<small id="gsub">Enter quantities above to build the estimate.</small></div>
+      <div class="gv dim" id="grand">$0</div>
+    </div>
+  </div>
+
+  <div class="stick" aria-live="polite">
+    <div class="sl">Job Total<b id="stickSub">0% off</b></div>
+    <div class="sv" id="stickTot">$0.00<small id="stickStd"></small></div>
+  </div>
+
+  <div class="ftr">
+    <div class="l">Coconut</div>
+    <div class="m">The Cleanest Way to Clean</div>
+    <div class="r">Professional · Precise · Proud</div>
+  </div>
+</div>
+</section>
+
+<section id="tab-club" hidden>
+<div class="cc">
+  <div class="cc-hdr">
+    <div class="eyebrow">Coconut Cleaning Co. · Membership</div>
+    <h2>The Coconut <span>Club</span></h2>
+    <p>A cleaning prescription for the whole home. Carpet is the anchor. Every season we come back and take care of the rest of the house with it.</p>
+  </div>
+  <div class="perks">
+    <div class="perk"><b>4+ visits</b><span>Every year, one each season</span></div>
+    <div class="perk"><b>Whole home</b><span>Floors, furniture, tile, air</span></div>
+    <div class="perk"><b>Free</b><span>Spot &amp; spill treatments 1–2x a month</span></div>
+    <div class="perk"><b>Free</b><span>Dryer vent cleaning every year</span></div>
+  </div>
+
+  <div class="cc-sec">
+    <div class="cc-h"><h3><span class="step">01</span>The home</h3><small>Who this prescription is for</small></div>
+    <div class="fields">
+      <div class="fld"><label for="ccName">Customer name</label><input id="ccName" type="text" autocomplete="off" placeholder="First and last name"></div>
+      <div class="fld"><label for="ccPhone">Phone</label><input id="ccPhone" type="tel" autocomplete="off" placeholder="(602) 555-0123"></div>
+      <div class="fld"><label for="ccEmail">Customer email</label><input id="ccEmail" type="email" autocomplete="off" placeholder="So they get their service months"></div>
+      <div class="fld"><label for="ccPro">Service pro</label><input id="ccPro" type="text" autocomplete="off" placeholder="Your name"></div>
+      <div class="fld wide"><label for="ccAddr">Service address</label><input id="ccAddr" type="text" autocomplete="off" placeholder="Street, city, ZIP"></div>
+    </div>
+  </div>
+
+  <div class="cc-sec">
+    <div class="cc-h"><h3><span class="step">02</span>Why deep cleaning matters</h3><small>Walk them through it</small></div>
+    <div class="why">
+      <div class="why-c">
+        <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="20" r="5"/><path d="M24 15c0-5 4-9 4-9s4 4 4 9M29 20c5 0 9-4 9-4s-4-4-9-4M24 25c0 5-4 9-4 9s-4-4-4-9M19 20c-5 0-9 4-9 4s4 4 9 4"/><path d="M24 34v8"/></svg>
+        <h4>Allergen reduction</h4>
+        <p>Carpet and upholstery hold pollen, dust and pet dander. Hot-water extraction pulls it out of the fibers instead of stirring it back into the air.</p>
+      </div>
+      <div class="why-c">
+        <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="11"/><circle cx="20" cy="21" r="2"/><circle cx="27" cy="27" r="2.5"/><circle cx="27" cy="19" r="1.2"/><path d="M24 13V7M24 41v-6M13 24H7M41 24h-6M16 16l-4-4M36 36l-4-4M32 16l4-4M12 36l4-4"/></svg>
+        <h4>Bacteria &amp; germs</h4>
+        <p>Spills, foot traffic and pets feed bacteria in carpet pad, grout lines and cushions. A deep clean flushes what vacuums and mops leave behind.</p>
+      </div>
+      <div class="why-c">
+        <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="18" width="38" height="16" rx="4"/><path d="M5 26h38"/><path d="M14 12l2 3M24 9v4M34 12l-2 3"/><path d="M10 34v4M38 34v4"/></svg>
+        <h4>Dust mites</h4>
+        <p>Mattresses, couches and carpet are where dust mites live. Cleaning on a seasonal schedule keeps them in check between visits.</p>
+      </div>
+      <div class="why-c">
+        <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6s12 13 12 22a12 12 0 0 1-24 0c0-9 12-22 12-22z"/><path d="M18 30a6 6 0 0 0 6 6"/></svg>
+        <h4>No residue left behind</h4>
+        <p>Every Coconut van runs reverse-osmosis water. No soap film is left in the fibers, so carpet stays cleaner longer and doesn't re-soil.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="cc-sec">
+    <div class="cc-h"><h3><span class="step">03</span>The prescription</h3><small>Count every item in the home</small></div>
+    <div id="rxBuild"></div>
+  </div>
+
+  <div class="cc-sec">
+    <div class="cc-h"><h3><span class="step">04</span>The air they breathe</h3><small>Air duct cleaning</small></div>
+    <div class="duct">
+      <div>
+        <div class="ba" id="ba">
+          <div class="layer after" id="baAfter"></div>
+          <div class="layer before" id="baBefore"></div>
+          <div class="handle" id="baHandle"><i>‹ ›</i></div>
+          <span class="tagl">Before</span><span class="tagr">After</span>
+          <input type="range" id="baRange" min="0" max="100" value="50" aria-label="Drag to compare before and after">
+        </div>
+        <div class="ba-cap"><span id="baCapTxt">Drag to compare. Illustration of a typical supply duct.</span><span id="baEdit"></span></div>
+      </div>
+      <div class="duct-pts">
+        <h4>Everything in the ducts rides the air, every time the AC kicks on.</h4>
+        <ul>
+          <li><span><b>Dust and pet hair</b> collect on every duct wall and recirculate through each room.</span></li>
+          <li><span><b>Drywall and construction debris</b> often sit in the ducts from the day the house was built.</span></li>
+          <li><span><b>Allergy relief</b> starts at the source. Cleaning carpet without cleaning ducts lets dust settle right back.</span></li>
+          <li><span><b>Dryer vent included.</b> Members get one dryer vent cleaning free every year.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+        
+
+  <div class="cc-sec">
+    <div class="cc-h"><h3><span class="step">05</span>Photos</h3><small id="phCount">Saved with the prescription</small></div>
+    <div class="ph-btns">
+      <label class="btn dark" for="phCam"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Take photo</label>
+      <label class="btn" for="phLib"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg>Upload photos</label>
+      <input id="phCam" type="file" accept="image/*" capture="environment" hidden>
+      <input id="phLib" type="file" accept="image/*" multiple hidden>
+    </div>
+    <div id="phGrid" class="ph-grid" hidden></div>
+    <div id="phEmpty" class="ph-empty">Snap the stains, traffic lanes, upholstery and vent registers. The office attaches them to the customer card.</div>
+    <p class="ph-cap" id="phCap" hidden>10 photos is the most one prescription can carry. Remove one to add another.</p>
+  </div>
+
+  <div class="cc-sec">
+    <div class="cc-h"><h3><span class="step">06</span>Seasonal plan</h3><small>4 visits a year is the minimum</small></div>
+    <div class="meter" id="meter"></div>
+    <div class="cal cal-wide" id="calWide"></div>
+    <div class="cal cal-narrow" id="calNarrow"></div>
+    <div class="cal-meta">
+      <div class="sum" id="calSum">No months checked yet.</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button type="button" class="chip2" data-preset="q1">Jan · Apr · Jul · Oct</button>
+        <button type="button" class="chip2" data-preset="q2">Feb · May · Aug · Nov</button>
+        <button type="button" class="chip2" data-preset="q3">Mar · Jun · Sep · Dec</button>
+        <button type="button" class="chip2" data-preset="clear">Clear</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="cc-sec">
+    <div class="cc-h"><h3><span class="step">07</span>The whole home, every season</h3><small>Tap an item to move it between visits</small></div>
+    <div class="yr" id="yr"></div>
+    <div class="visits" id="visits"></div>
+  </div>
+
+  <div class="cc-sec">
+    <div class="cc-h"><h3><span class="step">08</span>The prescription</h3><small>What we clean and how often</small></div>
+    <div class="rx-sum"><div class="rx-lines" id="rxLines"></div></div>
+    <div class="fld" style="margin-top:14px"><label for="ccNotes">Notes for the office</label><textarea id="ccNotes" placeholder="Pets, gate code, rooms to skip, first visit preference…"></textarea></div>
+    <div class="sig-sec">
+      <p class="sig-agree" id="sigAgree">By signing, I confirm I reviewed this Coconut Club prescription, the items in my home and my service months with my Service Pro.</p>
+      <div id="ccSig"></div>
+    </div>
+    <p class="office-note">Submitting emails this prescription as a PDF to <code>service@coconutcleaningco.com</code>, with the photos, the notes and the signature. <b>The customer gets the same PDF</b> at the email entered above, notes included.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+      <button type="button" class="btn pri" id="ccSave2">Submit signed prescription</button>
+      <button type="button" class="btn" id="ccClear">Start a new home</button>
+    </div>
+  </div>
+</div>
+<div class="cc-bar">
+  <div class="cc-bar-in">
+    <div class="k">Club prescription<b id="barSub">0 items · 0 visits</b></div>
+    <div class="v" id="barTot">0<small id="barStd">cleanings a year</small></div>
+    <button type="button" class="btn pri" id="ccSave">Submit</button>
+  </div>
+</div>
+</section>
+
+
+
+<div class="ov" id="ov" hidden>
+  <div class="md" role="dialog" aria-modal="true" aria-labelledby="mdTitle" id="md"></div>
+</div>
+
+<script>
+window.addEventListener('error',function(e){ try{ var b=document.getElementById('jsErr'); b.hidden=false; b.textContent='Calculator error: '+(e.message||e); }catch(x){} });
+function coconutInit(){
+ try{
+  document.getElementById('jsOk').textContent='calculator on';
+  var pct=document.getElementById('pct'), hdr=document.getElementById('hdrPct');
+  var promoName=document.getElementById('promoName'), promoPrice=document.getElementById('promoPrice'), promoQty=document.getElementById('promoQty'), promoOut=document.getElementById('promoOut');
+  var feePrice=document.getElementById('feePrice'), feeQty=document.getElementById('feeQty'), feeOut=document.getElementById('feeOut');
+  var rows=Array.prototype.slice.call(document.querySelectorAll('tr.item'));
+  var chips=document.querySelectorAll('.chip');
+  var grand=document.getElementById('grand'), gsub=document.getElementById('gsub');
+  var activeKey='';
+  var custName=document.getElementById('custName');
+  document.getElementById('estDate').textContent=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  var stdTotal=document.getElementById('stdTotal'), saves=document.getElementById('saves'), saveAmt=document.getElementById('saveAmt');
+
+  function money(n){ return '$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  function unit(n,dec){ return '$'+(dec?n.toFixed(2):Math.round(n).toLocaleString('en-US')); }
+
+  function render(){
+    var p=Math.min(100,Math.max(0,parseFloat(pct.value)||0));
+    hdr.textContent=p+'% off';
+    var sum=0, stdSum=0, lines=0, qtySaved={};
+    rows.forEach(function(tr,i){
+      var std=tr.querySelector('td.std'), q=tr.querySelector('td.qty input'), tot=tr.querySelector('td.tot');
+      var base=parseFloat(std.dataset.p), dec=std.dataset.p.indexOf('.')>-1;
+      var eff=base*(1-p/100);
+      std.innerHTML=unit(base,dec)+(p>0?'<span class="eff">'+unit(eff,dec)+' after '+p+'%</span>':'');
+      var qty=parseFloat(q.value)||0;
+      var line=eff*qty;
+      tot.textContent=money(line);
+      tot.classList.toggle('zero',qty<=0);
+      tr.classList.toggle('has',qty>0);
+      if(qty>0){sum+=line;stdSum+=base*qty;lines++;qtySaved[i]=q.value;}
+    });
+    var pp=parseFloat(promoPrice.value)||0, pq=parseFloat(promoQty.value)||0, pl=pp*pq;
+    promoOut.textContent=money(pl);
+    promoOut.classList.toggle('zero',pl<=0);
+    if(pl>0){sum+=pl;stdSum+=pl;lines++;}
+    var fp=parseFloat(feePrice.value)||0, fq=parseFloat(feeQty.value)||0, fl=fp*fq;
+    feeOut.textContent=money(fl); feeOut.classList.toggle('zero',fl<=0);
+    if(fl>0){sum+=fl;stdSum+=fl;lines++;}
+    stdTotal.textContent=money(stdSum); stdTotal.classList.toggle('dim',stdSum<=0);
+    var saved=stdSum-sum; saves.hidden=!(saved>0.005); saveAmt.textContent='\u2212'+money(saved);
+    grand.textContent=money(sum);
+    document.getElementById('stickTot').firstChild.textContent=money(sum);
+    document.getElementById('stickStd').textContent= saved>0.005 ? 'Standard '+money(stdSum) : '';
+    document.getElementById('stickSub').textContent= p>0 ? (activeKey==='vip'?'VIP ':activeKey==='club'?'Club ':activeKey?'Seasonal ':'')+p+'% off' : 'Standard price';
+    grand.classList.toggle('dim',sum<=0);
+    gsub.textContent = lines ? lines+' line item'+(lines>1?'s':'')+(p>0?' · '+(activeKey==='vip'?'VIP ':activeKey==='club'?'Club ':activeKey?'Seasonal ':'')+p+'% off applied':'')+((pl>0||fl>0)?' · fixed lines not discounted':'') : 'Enter quantities above to build the estimate.';
+    chips.forEach(function(c){c.classList.toggle('on', c.dataset.k===activeKey && parseFloat(c.dataset.v)===p);});
+    try{localStorage.setItem('coconut-ps2',JSON.stringify({c:custName.value,k:activeKey,p:p,n:promoName.value,pp:promoPrice.value,pq:promoQty.value,fp:feePrice.value,fq:feeQty.value,q:qtySaved}));}catch(e){}
+  }
+  ['input','change','keyup','paste'].forEach(function(ev){ document.addEventListener(ev,function(e){ if(e.target && e.target.tagName==='INPUT') render(); }, true); });
+  Array.prototype.forEach.call(document.querySelectorAll('input'),function(el){ el.addEventListener('input',render); el.addEventListener('change',render); });
+  setInterval(render,1500);
+  chips.forEach(function(c){c.addEventListener('click',function(){ if(activeKey===c.dataset.k){pct.value=0;activeKey='';} else {pct.value=c.dataset.v;activeKey=c.dataset.k;} render();});});
+  pct.addEventListener('input',function(){activeKey='';});
+  document.getElementById('clearQty').addEventListener('click',function(){
+    rows.forEach(function(tr){tr.querySelector('td.qty input').value='';}); promoQty.value=''; feeQty.value=''; custName.value=''; render();
+  });
+  document.getElementById('reset').addEventListener('click',function(){
+    custName.value='';pct.value=0;promoName.value='';promoPrice.value='';promoQty.value='';feePrice.value='';feeQty.value='';
+    rows.forEach(function(tr){tr.querySelector('td.qty input').value='';}); render();
+  });
+  try{var s=JSON.parse(localStorage.getItem('coconut-ps2')||'null'); if(s){custName.value=s.c||'';pct.value=s.p||0;activeKey=s.k||'';promoName.value=s.n||'';promoPrice.value=s.pp||'';promoQty.value=s.pq||'';feePrice.value=s.fp||'';feeQty.value=s.fq||'';
+    if(s.q){Object.keys(s.q).forEach(function(i){var r=rows[i]; if(r) r.querySelector('td.qty input').value=s.q[i];});}}}catch(e){}
+  render();
+ }catch(err){ if(window.console) console.error('price sheet init failed',err); }
+}
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',coconutInit);}else{coconutInit();}
+</script>
+<script src="../../shared/signature-pad.js"></script>
+<script>
+(function(){
+'use strict';
+var OFFICE='service@coconutcleaningco.com';
+var $=function(id){return document.getElementById(id);};
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function money(n){return '$'+(Number(n)||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function unitP(n){return '$'+(Math.round(n)===n?n.toLocaleString('en-US'):n.toFixed(2));}
+
+/* ---------- icons ---------- */
+var IC={
+ carpet:'<rect x="6" y="12" width="36" height="26" rx="2"/><path d="M11 38v-6M15 38v-8M19 38v-6M23 38v-8M27 38v-6M31 38v-8M35 38v-6M39 38v-7"/><path d="M6 20h36"/>',
+ stairs:'<path d="M6 40h9v-8h9v-8h9v-8h9V8"/><path d="M6 40h36"/>',
+ hall:'<path d="M6 42l12-12h12l12 12"/><path d="M18 30V12h12v18"/><path d="M6 6l12 6M42 6l-12 6"/>',
+ bath:'<path d="M5 24h38v5a9 9 0 0 1-9 9H14a9 9 0 0 1-9-9z"/><path d="M11 24V12a4 4 0 0 1 8 0v1"/><path d="M14 38l-2 4M34 38l2 4"/>',
+ washer:'<rect x="10" y="5" width="28" height="38" rx="3"/><path d="M10 13h28"/><circle cx="24" cy="28" r="9"/><path d="M19 29c2-2 4 2 6 0s3-1 4 0"/><circle cx="16" cy="9" r="1"/>',
+ closet:'<path d="M20 12a4 4 0 1 1 6 3.4c-1.2.7-2 1.6-2 3V20"/><path d="M24 20L6 34h36z"/>',
+ tile:'<rect x="6" y="6" width="36" height="36" rx="2"/><path d="M18 6v36M30 6v36M6 18h36M6 30h36"/>',
+ wood:'<rect x="6" y="8" width="36" height="32" rx="2"/><path d="M6 16h36M6 24h36M6 32h36M20 8v8M33 16v8M14 24v8M28 32v8"/>',
+ rug:'<rect x="10" y="9" width="28" height="30" rx="1"/><rect x="16" y="15" width="16" height="18"/><path d="M5 13h5M5 19h5M5 25h5M5 31h5M5 36h5M38 13h5M38 19h5M38 25h5M38 31h5M38 36h5"/>',
+ sectional:'<path d="M5 35V20a3 3 0 0 1 3-3h19a3 3 0 0 1 3 3v6h10a3 3 0 0 1 3 3v6z"/><path d="M5 28h25"/><path d="M8 35v4M40 35v4"/>',
+ sofa:'<path d="M10 22v-6a4 4 0 0 1 4-4h20a4 4 0 0 1 4 4v6"/><path d="M6 25a3 3 0 0 1 6 0v4h24v-4a3 3 0 0 1 6 0v10H6z"/><path d="M10 35v4M38 35v4"/>',
+ loveseat:'<path d="M14 22v-6a4 4 0 0 1 4-4h12a4 4 0 0 1 4 4v6"/><path d="M10 25a3 3 0 0 1 6 0v4h16v-4a3 3 0 0 1 6 0v10H10z"/><path d="M14 35v4M34 35v4"/>',
+ chair:'<path d="M16 23v-9a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v9"/><path d="M12 25a3 3 0 0 1 6 0v4h12v-4a3 3 0 0 1 6 0v10H12z"/><path d="M15 35v5M33 35v5"/>',
+ dining:'<path d="M16 6h14v18"/><path d="M16 6v36M14 24h20M32 24v18"/><path d="M16 12h14M16 18h14"/>',
+ ottoman:'<rect x="8" y="15" width="32" height="15" rx="5"/><path d="M8 22h32M13 30v8M35 30v8"/>',
+ car:'<path d="M5 31v-7l6-9h20l8 9h3a1 1 0 0 1 1 1v6z"/><circle cx="14" cy="33" r="4"/><circle cx="34" cy="33" r="4"/><path d="M11 24h30M22 15v9"/>',
+ counter:'<path d="M4 18h40v5H4z"/><path d="M8 23v19M40 23v19M8 32h32"/><path d="M28 18v-7a4 4 0 0 1 8 0"/>',
+ mattress:'<rect x="5" y="15" width="38" height="17" rx="4"/><path d="M5 23.5h38"/><path d="M14 19v1M24 19v1M34 19v1M14 27v1M24 27v1M34 27v1"/><path d="M9 32v4M39 32v4"/>',
+ shower:'<path d="M10 42V13a7 7 0 0 1 14 0"/><path d="M17 19h14l-2 4H19z"/><path d="M20 27v3M24 27v4M28 27v3M22 34v3M26 34v3"/>',
+ shield:'<path d="M24 6l14 5v11c0 10-6 16-14 20-8-4-14-10-14-20V11z"/><path d="M18 24l4 4 8-8"/>',
+ drop:'<path d="M24 6s12 13 12 22a12 12 0 0 1-24 0c0-9 12-22 12-22z"/><path d="M18 30a6 6 0 0 0 6 6"/>',
+ paw:'<circle cx="13" cy="19" r="3.5"/><circle cx="20" cy="12" r="3.5"/><circle cx="28" cy="12" r="3.5"/><circle cx="35" cy="19" r="3.5"/><path d="M24 22c-6 0-11 8-11 13 0 4 4 5 6 5s3-1 5-1 3 1 5 1 6-1 6-5c0-5-5-13-11-13z"/>',
+ vent:'<rect x="6" y="9" width="36" height="30" rx="2"/><path d="M12 16h24M12 21h24M12 26h24M12 31h24"/><path d="M24 39v4"/>',
+ dryer:'<rect x="5" y="9" width="14" height="30" rx="2"/><circle cx="12" cy="26" r="4"/><path d="M19 22h5c4 0 5-3 9-3s6 3 10 3"/><path d="M19 28h5c4 0 5 3 9 3s6-3 10-3"/><path d="M27 20v10M33 19v12M39 20v10"/>'
+};
+function svg(k){return '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(IC[k]||'')+'</svg>';}
+
+/* ---------- catalogue (standard prices match the Price Sheet; members pay 50%) ---------- */
+var ITEMS=[
+ ['Flooring','carpet','Carpet','Per area',88,'carpet'],
+ ['Flooring','stairs','Stairs','',112,'stairs'],
+ ['Flooring','hall','Hallway','Per lin. ft',4.70,'hall',5],
+ ['Flooring','bath','Bathroom','Per lin. ft',4.70,'bath',5],
+ ['Flooring','laundry','Laundry Room','Per lin. ft',4.70,'washer',5],
+ ['Flooring','closet','Closet','Per lin. ft',4.70,'closet',5],
+ ['Flooring','tile','Tile & Grout','Per area',112,'tile'],
+ ['Flooring','wood','Wood','',132,'wood'],
+ ['Flooring','rugs','Area Rugs','Per sq ft',2.64,'rug',10],
+ ['Upholstery','sectional','Sectional','',438,'sectional'],
+ ['Upholstery','sofa','Sofa','',250,'sofa'],
+ ['Upholstery','loveseat','Love Seat','',206,'loveseat'],
+ ['Upholstery','chair','Chair','',113,'chair'],
+ ['Upholstery','dining','Dining Chair','',30,'dining'],
+ ['Upholstery','ottoman','Ottoman','',95,'ottoman'],
+ ['Specialty','car','Car Interior','',180,'car'],
+ ['Specialty','counter','Countertop Clean & Seal','',211,'counter'],
+ ['Specialty','mattress','Mattress','',245,'mattress'],
+ ['Specialty','shower','Shower','',219,'shower'],
+ ['Protect your investment','protect','Protectant','Carpet · Upholstery',36,'shield'],
+ ['Protect your investment','sealant','Sealant','Tile & Grout · Stone',63,'drop'],
+ ['Protect your investment','hallprot','Hallway Protectant','Per lin. ft',2.35,'shield',5],
+ ['Protect your investment','hallseal','Hallway Sealant','Per lin. ft',2.35,'drop',5],
+ ['Biological decontamination','urine','Urine Decon','Topical',99,'paw'],
+ ['Biological decontamination','urinesub','Urine Decon','Sub-surface · per spot',99,'paw'],
+ ['Biological decontamination','hallurine','Hallway Urine Topical','Per lin. ft',2.35,'paw',5],
+ ['Air quality','duct','Air Duct Cleaning','Sq ft of home',0.70,'vent',100],
+ ['Air quality','dryer','Dryer Vent','Free once a year',298,'dryer',1,0]
+].map(function(r){return {cat:r[0],k:r[1],n:r[2],u:r[3],p:r[4],i:r[5],step:r[6]||1,m:(r[7]!==undefined?r[7]:Math.round(r[4]*50)/100),toggle:r[1]==='dryer',once:(r[1]==='dryer'||r[1]==='duct')};});
+var BY={}; ITEMS.forEach(function(it){BY[it.k]=it;});
+
+var MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var MFULL=['January','February','March','April','May','June','July','August','September','October','November','December'];
+var SEASON_OF=['winter','winter','spring','spring','spring','summer','summer','summer','fall','fall','fall','winter'];
+var SCOL={winter:'#5BA4D9',spring:'#4FA36B',summer:'#E0A21B',fall:'#C8693A'};
+var SICON={
+ winter:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M3.3 7l17.4 10M3.3 17L20.7 7M9 4l3 2 3-2M9 20l3-2 3 2"/></svg>',
+ spring:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21v-9"/><path d="M12 12C12 7 8 5 4 5c0 4 3 7 8 7zM12 14c0-4 3-7 8-7 0 4-3 7-8 7z"/></svg>',
+ summer:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
+ fall:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19C5 10 11 4 20 4c0 9-6 15-15 15z"/><path d="M5 19l8-8"/></svg>'
+};
+
+/* ---------- state ---------- */
+var S={name:'',phone:'',email:'',pro:'',addr:'',notes:'',q:{},months:[],over:{}};
+var photos=[]; // {blob,url,label}
+var DKEY='coconut-club-draft-v2';
+try{var d=JSON.parse(localStorage.getItem(DKEY)||'null'); if(d){for(var k in S){if(d[k]!==undefined)S[k]=d[k];}}}catch(e){}
+function persist(){try{localStorage.setItem(DKEY,JSON.stringify(S));}catch(e){}}
+
+/* ---------- build prescription grid ---------- */
+function buildGrid(){
+ var html='',cat='';
+ ITEMS.forEach(function(it){
+  if(it.cat!==cat){ if(cat) html+='</div>'; cat=it.cat; html+='<div class="rx-cat">'+esc(cat)+'</div><div class="rx-grid">'; }
+  var ctl = it.toggle ? '<button type="button" class="tgl" data-tg="'+it.k+'">Add to plan</button>'
+   : '<div class="stp"><button type="button" data-d="-1" data-k="'+it.k+'" aria-label="Less '+esc(it.n)+'">−</button><input id="rx_'+it.k+'" type="number" min="0" step="'+it.step+'" inputmode="decimal" placeholder="0" data-k="'+it.k+'" aria-label="'+esc(it.n+' '+(it.u||'quantity'))+'"><button type="button" data-d="1" data-k="'+it.k+'" aria-label="More '+esc(it.n)+'">+</button></div>';
+  html+='<div class="rx" id="card_'+it.k+'"><div class="th">'+svg(it.i)+'<span class="q" id="q_'+it.k+'"></span></div><div class="nm">'+esc(it.n)+(it.u?'<span class="un">'+esc(it.u)+'</span>':'')+'</div>'+ctl+'</div>';
+ });
+ html+='</div>';
+ $('rxBuild').innerHTML=html;
+ $('rxBuild').addEventListener('click',function(e){
+  var b=e.target.closest('button'); if(!b) return;
+  if(b.dataset.tg){ var k=b.dataset.tg; S.q[k]=S.q[k]?0:1; sync(); return; }
+  if(b.dataset.d){ var it=BY[b.dataset.k]; var cur=Number(S.q[it.k])||0; var nx=Math.max(0,cur+Number(b.dataset.d)*it.step); if(Number(b.dataset.d)<0 && cur%it.step) nx=Math.max(0,Math.floor(cur/it.step)*it.step); S.q[it.k]=nx; sync(); }
+ });
+ $('rxBuild').addEventListener('input',function(e){
+  var t=e.target; if(!t.dataset||!t.dataset.k) return; var v=parseFloat(t.value); S.q[t.dataset.k]=isFinite(v)&&v>0?v:0; sync(true);
+ });
+}
+
+/* ---------- calendar ---------- */
+function monthCell(i,uid){return '<label class="mo"><input type="checkbox" id="m'+uid+'_'+i+'" data-m="'+i+'"><span>'+MONTHS[i]+'</span></label>';}
+function group(season,idx,uid,grow){return '<div class="sg s-'+season+'" style="flex:'+grow+'"><div class="sn">'+SICON[season]+season+'</div><div class="ms">'+idx.map(function(i){return monthCell(i,uid);}).join('')+'</div></div>';}
+function buildCal(){
+ $('calWide').innerHTML=group('winter',[0,1],'w',2)+group('spring',[2,3,4],'w',3)+group('summer',[5,6,7],'w',3)+group('fall',[8,9,10],'w',3)+group('winter',[11],'w',1);
+ $('calNarrow').innerHTML=group('winter',[11,0,1],'n',1)+group('spring',[2,3,4],'n',1)+group('summer',[5,6,7],'n',1)+group('fall',[8,9,10],'n',1);
+ [$('calWide'),$('calNarrow')].forEach(function(el){el.addEventListener('change',function(e){
+  var m=Number(e.target.dataset.m); var on=e.target.checked; var set=S.months.filter(function(x){return x!==m;}); if(on) set.push(m); S.months=set.sort(function(a,b){return a-b;}); sync();
+ });});
+ document.querySelectorAll('[data-preset]').forEach(function(b){b.addEventListener('click',function(){
+  var p=b.dataset.preset; S.months = p==='q1'?[0,3,6,9]:p==='q2'?[1,4,7,10]:p==='q3'?[2,5,8,11]:[]; sync();
+ });});
+}
+function nextVisit(){
+ if(!S.months.length) return '';
+ var now=new Date(), cm=now.getMonth();
+ for(var o=1;o<=12;o++){var m=(cm+o)%12; if(S.months.indexOf(m)>-1){ return MFULL[m]+' '+(now.getFullYear()+(cm+o>11?1:0)); }}
+ return '';
+}
+
+/* ---------- plan ---------- */
+var MIN=4;
+function chosen(){ return ITEMS.filter(function(it){return Number(S.q[it.k])>0;}); }
+function inVisit(m,it){
+ var o=S.over[m+'|'+it.k]; if(o!==undefined) return o;
+ return it.once ? m===S.months[0] : true;
+}
+function qtyLabel(it){
+ var q=Number(S.q[it.k]); if(it.toggle) return '';
+ var n=q%1?q.toFixed(1):q;
+ if(/sq ft/i.test(it.u)) return n+' sq ft';
+ if(/lin\. ft/i.test(it.u)) return n+' ft';
+ return '× '+n;
+}
+function stats(){
+ var items=chosen(), per={}, total=0;
+ items.forEach(function(it){ per[it.k]=S.months.filter(function(m){return inVisit(m,it);}).length; total+=per[it.k]; });
+ var carpetOnly = S.months.length>0 && items.some(function(it){return it.k==='carpet';}) ? S.months.length : 0;
+ return {items:items,per:per,total:total,visits:S.months.length,carpetOnly:carpetOnly};
+}
+function timesTxt(n){ return n===0?'Not scheduled':n===1?'Once a year':n+'x a year'; }
+
+/* ---------- render ---------- */
+function sync(fromTyping){
+ ITEMS.forEach(function(it){
+  var q=Number(S.q[it.k])||0, card=$('card_'+it.k);
+  card.classList.toggle('on',q>0);
+  $('q_'+it.k).textContent=it.toggle?'✓':(q%1?q.toFixed(1):q);
+  if(it.toggle){ card.querySelector('.tgl').textContent=q?'Included ✓':'Add to plan'; }
+  else { var inp=$('rx_'+it.k); if(!(fromTyping && document.activeElement===inp)) inp.value=q?q:''; }
+ });
+ ['w','n'].forEach(function(u){for(var i=0;i<12;i++){var c=$('m'+u+'_'+i); if(c) c.checked=S.months.indexOf(i)>-1;}});
+ var st=stats(), n=st.visits;
+
+ // minimum meter
+ var dots='', slots=Math.max(MIN,n);
+ for(var d=0; d<slots; d++){ var m=S.months[d]; dots+= m!==undefined ? '<i class="on" style="background:'+SCOL[SEASON_OF[m]]+'">'+MONTHS[m].charAt(0)+'</i>' : '<i>'+(d+1)+'</i>'; }
+ var met=n>=MIN;
+ $('meter').className='meter'+(met?' ok':'');
+ $('meter').innerHTML='<div class="dots">'+dots+'</div><p>'+(met?'<b>Minimum met.</b> '+n+' visits a year keeps the whole home on a seasonal rhythm.':'<b>4 visits a year is the minimum.</b> '+(MIN-n)+' more month'+(MIN-n===1?'':'s')+' to pick, one in each season works best.')+'</p>';
+ $('calSum').innerHTML = n ? '<b>'+n+' visit'+(n>1?'s':'')+' a year</b> · '+S.months.map(function(m){return MONTHS[m];}).join(', ')+(nextVisit()?' · next: <b>'+nextVisit()+'</b>':'') : 'No months checked yet.';
+
+ // year headline
+ $('yr').innerHTML='<div><small>Carpet only</small><b>'+(st.carpetOnly||n||0)+'</b><span>cleanings a year if we only did the carpet</span></div>'
+  +'<div><small>The whole home</small><b>'+st.total+'</b><span>'+st.items.length+' item'+(st.items.length===1?'':'s')+' cleaned across '+n+' visit'+(n===1?'':'s')+' this year</span></div>';
+
+ // visit cards
+ if(!n){ $('visits').innerHTML='<div class="vc-empty">Check the service months above to lay out each visit.</div>'; }
+ else if(!st.items.length){ $('visits').innerHTML='<div class="vc-empty">Count the items in the home above. Each visit will fill in here.</div>'; }
+ else {
+  $('visits').innerHTML=S.months.map(function(m,vi){
+   var sea=SEASON_OF[m], on=0;
+   var chips=st.items.map(function(it){ var inc=inVisit(m,it); if(inc) on++;
+     return '<button type="button" class="vchip'+(inc?'':' off')+'" data-vm="'+m+'" data-vk="'+it.k+'" aria-pressed="'+inc+'">'+svg(it.i)+esc(it.n)+(qtyLabel(it)?' <em>'+esc(qtyLabel(it))+'</em>':'')+'</button>'; }).join('');
+   return '<div class="vc"><div class="vh" style="background:'+SCOL[sea]+'"><b>'+MFULL[m]+'</b><span>'+SICON[sea]+'Visit '+(vi+1)+'</span></div><div class="vb">'+chips+'</div><div class="vf">'+on+' of '+st.items.length+' items this visit</div></div>';
+  }).join('');
+ }
+
+ // prescription list
+ $('rxLines').innerHTML = st.items.length ? st.items.map(function(it){
+   var t=st.per[it.k];
+   return '<div class="ln"><span><b>'+esc(it.n)+'</b>'+(qtyLabel(it)?'<small>'+esc(qtyLabel(it))+'</small>':'')+'</span><span></span><span class="times'+(t===1?' one':'')+'">'+(n?timesTxt(t):'')+'</span></div>';
+ }).join('') : '<div class="none">Count the items in the home above to build the prescription.</div>';
+
+ $('barSub').textContent=(S.name?S.name+' · ':'')+st.items.length+' item'+(st.items.length===1?'':'s')+' · '+n+' visit'+(n===1?'':'s');
+ $('barTot').firstChild.textContent=st.total;
+ $('barStd').textContent=met?'cleanings a year':'pick '+(MIN-n)+' more month'+(MIN-n===1?'':'s');
+ persist();
+}
+function bindVisits(){
+ $('visits').addEventListener('click',function(e){
+  var b=e.target.closest('[data-vk]'); if(!b) return;
+  var m=Number(b.dataset.vm), it=BY[b.dataset.vk];
+  S.over[m+'|'+it.k]=!inVisit(m,it); sync();
+ });
+}
+
+/* ---------- fields ---------- */
+var FIELDS={ccName:'name',ccPhone:'phone',ccEmail:'email',ccPro:'pro',ccAddr:'addr',ccNotes:'notes'};
+function bindFields(){
+ Object.keys(FIELDS).forEach(function(id){
+  var el=$(id); el.value=S[FIELDS[id]]; el.addEventListener('input',function(){ S[FIELDS[id]]=el.value; el.classList.remove('err'); sync(true); });
+ });
+}
+
+/* ---------- customer name shared with the Price Sheet ---------- */
+function linkName(){
+ var ps=$('custName'), cc=$('ccName'); if(!ps) return;
+ if(ps.value && !S.name){ S.name=ps.value; cc.value=ps.value; }
+ else if(S.name && !ps.value){ ps.value=S.name; ps.dispatchEvent(new Event('input',{bubbles:true})); }
+ ps.addEventListener('input',function(){ if(cc.value!==ps.value){ cc.value=ps.value; S.name=ps.value; cc.classList.remove('err'); sync(); } });
+ cc.addEventListener('input',function(){ if(ps.value!==cc.value){ ps.value=cc.value; ps.dispatchEvent(new Event('input',{bubbles:true})); } });
+}
+
+/* ---------- photos ---------- */
+var MAXPH=10;
+var LABELS=['Carpet','Upholstery','Tile & grout','Area rug','Stain / spot','Pet / urine','Air duct (before)','Air duct (after)','Dryer vent','Other'];
+function compress(file){
+ return new Promise(function(res){
+  var url=URL.createObjectURL(file), img=new Image();
+  img.onload=function(){
+   var max=1400, w=img.naturalWidth, h=img.naturalHeight, s=Math.min(1,max/Math.max(w,h));
+   var c=document.createElement('canvas'); c.width=Math.round(w*s); c.height=Math.round(h*s);
+   c.getContext('2d').drawImage(img,0,0,c.width,c.height); URL.revokeObjectURL(url);
+   c.toBlob(function(b){res(b||file);},'image/jpeg',0.76);
+  };
+  img.onerror=function(){URL.revokeObjectURL(url);res(file);};
+  img.src=url;
+ });
+}
+function addFiles(list){
+ var arr=Array.prototype.slice.call(list||[]).filter(function(f){return /^image\//.test(f.type)||/\.(heic|heif|jpe?g|png|webp)$/i.test(f.name);});
+ var room=Math.max(0,MAXPH-photos.length); var over=arr.length>room; arr=arr.slice(0,room); $('phCap').hidden=!over;
+ Promise.all(arr.map(compress)).then(function(blobs){
+  blobs.forEach(function(b){photos.push({blob:b,url:URL.createObjectURL(b),label:'Carpet'});});
+  renderPhotos();
+ });
+}
+function renderPhotos(){
+ var g=$('phGrid');
+ g.hidden=!photos.length; $('phEmpty').hidden=!!photos.length;
+ $('phCount').textContent=photos.length?photos.length+' photo'+(photos.length>1?'s':'')+' attached':'Saved with the prescription';
+ g.innerHTML=photos.map(function(p,i){
+  return '<div class="ph"><img src="'+p.url+'" alt="'+esc(p.label)+' photo '+(i+1)+'"><div class="row"><select data-pi="'+i+'" id="phl_'+i+'" aria-label="Photo '+(i+1)+' label">'+LABELS.map(function(l){return '<option'+(l===p.label?' selected':'')+'>'+esc(l)+'</option>';}).join('')+'</select><button type="button" class="x" data-rm="'+i+'" aria-label="Remove photo '+(i+1)+'">×</button></div></div>';
+ }).join('');
+}
+function bindPhotos(){
+ ['phCam','phLib'].forEach(function(id){$(id).addEventListener('change',function(e){addFiles(e.target.files); e.target.value='';});});
+ $('phGrid').addEventListener('change',function(e){var i=e.target.dataset.pi; if(i!==undefined) photos[i].label=e.target.value;});
+ $('phGrid').addEventListener('click',function(e){var b=e.target.closest('[data-rm]'); if(!b) return; var i=Number(b.dataset.rm); URL.revokeObjectURL(photos[i].url); photos.splice(i,1); $('phCap').hidden=true; renderPhotos();});
+}
+
+/* ---------- air duct before / after illustration ---------- */
+function ductSVG(dirty){
+ var W=400,H=250,ix=150,iy=95,iw=100,ih=60;
+ function ring(t){var x0=ix*t,y0=iy*t,x1=W-(W-ix-iw)*t,y1=H-(H-iy-ih)*t;return '<rect x="'+x0.toFixed(1)+'" y="'+y0.toFixed(1)+'" width="'+(x1-x0).toFixed(1)+'" height="'+(y1-y0).toFixed(1)+'" fill="none" stroke="'+(dirty?'#6E6457':'#9AA6B0')+'" stroke-width="'+(2.4*(1-t)+0.6).toFixed(2)+'"/>';}
+ var s='<svg viewBox="0 0 400 250" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">';
+ s+='<defs><linearGradient id="g'+(dirty?'d':'c')+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+(dirty?'#8C8274':'#E9EEF2')+'"/><stop offset="1" stop-color="'+(dirty?'#5F574C':'#B7C2CB')+'"/></linearGradient></defs>';
+ var top=dirty?'#8E8577':'#DCE3E8', bot=dirty?'#5E5446':'#C3CDD5', lft=dirty?'#756B5E':'#B4BFC8', rgt=dirty?'#837A6C':'#CDD6DD', far=dirty?'#1E1A16':'#2B3138';
+ s+='<polygon points="0,0 400,0 250,95 150,95" fill="'+top+'"/>';
+ s+='<polygon points="0,250 400,250 250,155 150,155" fill="'+bot+'"/>';
+ s+='<polygon points="0,0 150,95 150,155 0,250" fill="'+lft+'"/>';
+ s+='<polygon points="400,0 250,95 250,155 400,250" fill="'+rgt+'"/>';
+ s+='<rect x="150" y="95" width="100" height="60" fill="'+far+'"/>';
+ [0.28,0.55,0.78].forEach(function(t){s+=ring(t);});
+ if(!dirty){
+  s+='<polygon points="30,0 70,0 168,95 160,95" fill="#FFFFFF" opacity=".55"/>';
+  s+='<polygon points="300,250 340,250 236,155 230,155" fill="#FFFFFF" opacity=".35"/>';
+  s+='<polygon points="0,60 0,90 150,128 150,118" fill="#FFFFFF" opacity=".25"/>';
+ } else {
+  var seed=7; function r(){seed=(seed*9301+49297)%233280;return seed/233280;}
+  s+='<path d="M0,250 C60,214 120,200 160,170 L240,170 C280,200 340,214 400,250 Z" fill="#4A4036" opacity=".85"/>';
+  s+='<path d="M0,250 C70,226 120,214 165,182 L235,182 C280,214 330,226 400,250 Z" fill="#3B332B" opacity=".9"/>';
+  for(var i=0;i<260;i++){
+   var x=r()*400,y=r()*250, a=r(); var rad=(0.6+r()*2.4)*(0.4+Math.abs(y-125)/125);
+   s+='<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="'+rad.toFixed(2)+'" fill="'+(a>.5?'#3E352C':'#A39684')+'" opacity="'+(0.35+r()*0.5).toFixed(2)+'"/>';
+  }
+  for(var j=0;j<26;j++){
+   var x0=r()*400,y0=r()<.5?r()*60:190+r()*60, dx=(r()-.5)*60, dy=(r()-.5)*24;
+   s+='<path d="M'+x0.toFixed(1)+','+y0.toFixed(1)+' q'+(dx/2).toFixed(1)+','+(dy*2).toFixed(1)+' '+dx.toFixed(1)+','+dy.toFixed(1)+'" stroke="#C9BDAA" stroke-width="'+(0.8+r()*1.2).toFixed(2)+'" fill="none" opacity=".8" stroke-linecap="round"/>';
+  }
+  s+='<polygon points="0,0 150,95 150,155 0,250" fill="#3A3128" opacity=".25"/>';
+  s+='<rect x="0" y="0" width="400" height="250" fill="#7A6A55" opacity=".18"/>';
+ }
+ return s+'</svg>';
+}
+var showcase=null; // real job photos were stored in the artifact's database; not used here
+function renderBA(){
+ if(showcase&&showcase.beforeUrl&&showcase.afterUrl){
+  $('baBefore').innerHTML='<img alt="Air duct before cleaning" src="'+esc(showcase.beforeUrl)+'">';
+  $('baAfter').innerHTML='<img alt="Air duct after cleaning" src="'+esc(showcase.afterUrl)+'">';
+  $('baCapTxt').textContent='Drag to compare. Real Coconut air duct job.';
+ } else {
+  $('baBefore').innerHTML=ductSVG(true); $('baAfter').innerHTML=ductSVG(false);
+  $('baCapTxt').textContent='Drag to compare. Illustration of a typical supply duct.';
+ }
+}
+function bindBA(){
+ var r=$('baRange');
+ function set(){var v=r.value; $('baBefore').style.clipPath='inset(0 '+(100-v)+'% 0 0)'; $('baHandle').style.left=v+'%';}
+ r.addEventListener('input',set); set();
+}
+
+/* ---------- tabs ---------- */
+var TABS={'price-sheet':'tab-sheet','club':'tab-club'};
+function show(name){
+ if(!TABS[name]) name='price-sheet';
+ Object.keys(TABS).forEach(function(k){ $(TABS[k]).hidden = k!==name; });
+ document.querySelectorAll('.tab').forEach(function(t){t.setAttribute('aria-selected',String(t.dataset.tab===name));});
+ document.body.classList.toggle('on-club',name!=='price-sheet');
+ if(name==='club' && !S.name){ var pn=$('custName'); if(pn && pn.value){ S.name=pn.value; $('ccName').value=pn.value; sync(); } }
+}
+function bindTabs(){
+ document.querySelectorAll('.tab').forEach(function(t){t.addEventListener('click',function(){
+  try{ if(location.hash!=='#'+t.dataset.tab) location.hash=t.dataset.tab; else show(t.dataset.tab);}catch(e){show(t.dataset.tab);}
+  window.scrollTo(0,0);
+ });});
+ window.addEventListener('hashchange',function(){show(location.hash.slice(1));});
+ show(location.hash.slice(1));
+}
+
+/* ---------- summary text (only used if the send fails, so nothing is lost) ---------- */
+function summaryText(rec){
+ var L=[];
+ L.push('COCONUT CLUB PRESCRIPTION');
+ L.push('Saved '+new Date(rec.createdAt).toLocaleString('en-US',{dateStyle:'medium',timeStyle:'short'}));
+ L.push('');
+ L.push('Customer: '+(rec.customer.name||'-'));
+ if(rec.customer.phone) L.push('Phone: '+rec.customer.phone);
+ if(rec.customer.email) L.push('Email: '+rec.customer.email);
+ if(rec.customer.address) L.push('Address: '+rec.customer.address);
+ if(rec.pro) L.push('Service pro: '+rec.pro);
+ L.push('');
+ L.push('YOUR SERVICE MONTHS ('+rec.months.length+' visits a year)');
+ (rec.visits||[]).forEach(function(v){ L.push('- '+MFULL[v.month]+' ('+SEASON_OF[v.month]+'): '+(v.items.length?v.items.join(', '):'nothing scheduled')); });
+ L.push('');
+ L.push('THE HOME ('+rec.cleanings+' cleanings a year)');
+ if(!rec.items.length) L.push('No items counted');
+ rec.items.forEach(function(l){ L.push('- '+l.name+(l.qty?' '+l.qty:'')+': '+timesTxt(l.times)); });
+ if(rec.notes){ L.push(''); L.push('NOTES'); L.push(rec.notes); }
+ L.push('');
+ if(rec.photoCount){ L.push('PHOTOS: '+rec.photoCount+' taken on site (attach them from the camera roll)'); }
+ L.push('The customer signed on the device; the signature did not send. Have them sign again when the page is back online.');
+ return L.join('\n');
+}
+function mailto(rec,text){
+ var subj='Coconut Club Prescription - '+(rec.customer.name||'Customer')+(rec.months.length?' - '+rec.months.map(function(m){return MONTHS[m];}).join('/'):'');
+ var head='mailto:'+OFFICE+'?subject='+encodeURIComponent(subj)+(rec.customer.email?'&cc='+encodeURIComponent(rec.customer.email):'')+'&body=';
+ var href=head+encodeURIComponent(text);
+ if(href.length>7800) href=head+encodeURIComponent(text.slice(0,5000));
+ return href;
+}
+
+/* ---------- modal ---------- */
+var CHECK='<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+var WARN='<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 7v6M12 17h.01"/></svg>';
+function openModal(html){ $('md').innerHTML=html; $('ov').hidden=false; var f=$('md').querySelector('button,a'); if(f) f.focus(); }
+function closeModal(){ $('ov').hidden=true; }
+$('ov').addEventListener('click',function(e){ if(e.target===$('ov') && !saving) closeModal(); });
+document.addEventListener('keydown',function(e){ if(e.key==='Escape' && !$('ov').hidden && !saving) closeModal(); });
+
+function sentModal(rec,res){
+ var n=rec.photoCount, who=esc(rec.customer.name);
+ var html='<div class="ok'+(res.emailed?'':' warn')+'">'+(res.emailed?CHECK:WARN)+'</div>';
+ html+='<h4 id="mdTitle">'+(res.emailed?'Prescription sent':'Saved, email pending')+'</h4>';
+ html+='<p>'+(res.emailed
+   ? who+'\'s signed prescription went to the office as a PDF'+(n?' with '+n+' photo'+(n>1?'s':''):'')+'.'+(res.copied?' A copy went to '+esc(rec.customer.email)+'.':(rec.customer.email?' The customer email did not look right, so no copy went to the customer.':' No customer email was entered, so no copy went to the customer.'))
+   : who+'\'s signed prescription is saved with the office, but the email did not go out. Call the office and give them the reference below.')+'</p>';
+ html+='<div class="addr"><span>Reference '+esc(res.reference||'')+'</span></div>';
+ html+='<div class="acts"><button type="button" class="btn dark" id="mdDone">Done</button></div>';
+ openModal(html);
+ $('mdDone').onclick=function(){ closeModal(); resetHome(); };
+}
+function failModal(rec,text,msg){
+ var html='<div class="ok warn">'+WARN+'</div><h4 id="mdTitle">Not sent yet</h4><p>'+esc(msg)+'</p>';
+ html+='<div class="acts"><button type="button" class="btn pri" id="mdRetry">Try again</button>';
+ html+='<a class="btn" id="mdMail" href="'+esc(mailto(rec,text))+'" target="_blank" rel="noopener">Email the office instead</a>';
+ html+='<button type="button" class="btn" id="mdCopy">Copy prescription text</button>';
+ html+='<button type="button" class="btn dark" id="mdDone">Back to the prescription</button></div>';
+ html+='<p class="prog" id="mdMsg" style="margin-top:10px">Nothing was lost. The prescription and the signature are still on this screen.</p>';
+ html+='<textarea id="mdText" readonly hidden aria-label="Prescription text">'+esc(text)+'</textarea>';
+ openModal(html);
+ $('mdRetry').onclick=function(){ closeModal(); save(); };
+ $('mdDone').onclick=closeModal;
+ $('mdCopy').onclick=function(){
+  var btn=this, done=function(){btn.textContent='Copied';setTimeout(function(){btn.textContent='Copy prescription text';},1600);};
+  function fallback(){ var ta=$('mdText'); ta.hidden=false; ta.focus(); ta.select(); $('mdMsg').textContent='Text selected. Press copy on your keyboard or long-press to copy.'; }
+  try{ navigator.clipboard.writeText(text).then(done,fallback); }catch(e){ fallback(); }
+ };
+}
+
+/* ---------- customer signature ---------- */
+var pad = window.CoconutSignature ? window.CoconutSignature.mount($('ccSig')) : null;
+if(!pad){ var je=$('jsErr'); je.hidden=false; je.textContent='The signature box did not load. Check the connection and reopen the page.'; }
+
+/* ---------- submit ---------- */
+var saving=false;
+function toDataUrl(blob){ return new Promise(function(res,rej){ var fr=new FileReader(); fr.onload=function(){res(fr.result);}; fr.onerror=function(){rej(new Error('A photo could not be read. Remove it and try again.'));}; fr.readAsDataURL(blob); }); }
+function save(){
+ if(saving) return;
+ if(!S.name.trim()){ var n=$('ccName'); n.classList.add('err'); n.scrollIntoView({behavior:'smooth',block:'center'}); n.focus({preventScroll:true}); return; }
+ if(S.months.length<MIN){ $('meter').scrollIntoView({behavior:'smooth',block:'center'}); $('meter').animate&&$('meter').animate([{transform:'translateX(0)'},{transform:'translateX(-6px)'},{transform:'translateX(6px)'},{transform:'translateX(0)'}],{duration:280}); return; }
+ if(!pad) return;
+ if(pad.isEmpty()){ pad.flagMissing(); return; }
+ var st=stats();
+ var rec={
+  customer:{name:S.name.trim(),phone:S.phone.trim(),email:S.email.trim(),address:S.addr.trim()},
+  pro:S.pro.trim(), notes:S.notes.trim(), months:S.months.slice(),
+  items:st.items.map(function(it){return {name:it.n,unit:it.u||'',qty:qtyLabel(it),times:st.per[it.k]};}),
+  visits:S.months.map(function(m){return {month:m,items:st.items.filter(function(it){return inVisit(m,it);}).map(function(it){return it.n+(qtyLabel(it)?' ('+qtyLabel(it)+')':'');})};}),
+  cleanings:st.total, photoCount:photos.length, createdAt:Date.now()
+ };
+ saving=true; $('ccSave').disabled=true; $('ccSave2').disabled=true;
+ openModal('<div class="ok">'+CHECK+'</div><h4 id="mdTitle">Sending…</h4><p class="prog" id="mdProg">Preparing the prescription</p>');
+ var unlock=function(){ saving=false; $('ccSave').disabled=false; $('ccSave2').disabled=false; };
+ var nv=nextVisit();
+ var payload={
+  form:'club_prescription', customer:rec.customer, service_pro:rec.pro, notes:rec.notes,
+  agreed_text:$('sigAgree').textContent, signature:pad.toDataURL(), photos:[], photo_labels:photos.map(function(p){return p.label;}),
+  sections:[
+   {title:'Your service months', subtitle:rec.months.length+' visits a year', layout:'stacked', text:(nv?'Next visit: '+nv+'.':''),
+    rows:rec.visits.map(function(v,i){return [MFULL[v.month], v.items.length?v.items.join(', '):'Nothing scheduled this visit', 'Visit '+(i+1)+' · '+SEASON_OF[v.month]];})},
+   {title:'The home', subtitle:'What we clean and how often', columns:['Item','Quantity','How often'],
+    rows:rec.items.map(function(l){return [l.name+(l.unit?' ('+l.unit+')':''), l.qty||'Included', timesTxt(l.times)];})}
+  ],
+  totals:[{label:'Visits a year',value:String(rec.months.length)},{label:'Cleanings a year',value:String(rec.cleanings)}]
+ };
+ var chain=Promise.resolve();
+ photos.forEach(function(p,i){ chain=chain.then(function(){ var pr=$('mdProg'); if(pr) pr.textContent='Adding photo '+(i+1)+' of '+photos.length; return toDataUrl(p.blob).then(function(u){ payload.photos.push(u); }); }); });
+ chain.then(function(){ var pr=$('mdProg'); if(pr) pr.textContent='Sending to the office'; return window.CoconutSignature.submit(payload); })
+  .then(function(res){ unlock(); sentModal(rec,res); })
+  .catch(function(e){ unlock(); failModal(rec,summaryText(rec),(e&&e.message)||'Could not send. Try again.'); });
+}
+function resetHome(){
+ S={name:'',phone:'',email:'',pro:S.pro,addr:'',notes:'',q:{},months:[],over:{}};
+ photos.forEach(function(p){URL.revokeObjectURL(p.url);}); photos=[]; $('phCap').hidden=true;
+ Object.keys(FIELDS).forEach(function(id){$(id).value=S[FIELDS[id]];});
+ if(pad) pad.clear();
+ renderPhotos(); sync(); window.scrollTo(0,0);
+}
+var clearArmed=false;
+$('ccClear').addEventListener('click',function(){
+ var b=this; if(!clearArmed){ clearArmed=true; b.textContent='Tap again to clear'; setTimeout(function(){clearArmed=false;b.textContent='Start a new home';},2500); return; }
+ clearArmed=false; b.textContent='Start a new home'; resetHome();
+});
+$('ccSave').addEventListener('click',save);
+$('ccSave2').addEventListener('click',save);
+
+/* ---------- boot ---------- */
+buildGrid(); buildCal(); bindVisits(); bindFields(); linkName(); bindPhotos(); renderPhotos(); renderBA(); bindBA(); bindTabs(); sync();
+})();
+</script>
+
+
+</body>
+</html>
